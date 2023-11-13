@@ -1,2 +1,10 @@
-/doc/
-/Meta/
+Icon
+.Rproj
+.Rhistory
+.RData
+src/*.o
+src/*.so
+src/*.dll
+.Rproj.user
+.DS_Store
+.DS_store

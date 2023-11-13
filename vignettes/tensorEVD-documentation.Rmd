@@ -707,7 +707,7 @@ out$alpha <- factor(paste0(100*out$alpha,"%"), levels=c("98%","95%","90%"))
 
 # Figure 5: Within environment prediction correlation
 rg <- range(c(out$eigen,out$tensorEVD))
-if(requireNamespace("ggplot2")){
+if(requireNamespace("ggplot2", quietly=TRUE)){
   figure5 <-  ggplot2::ggplot(out, ggplot2::aes(tensorEVD, eigen)) +
               ggplot2::geom_abline(color="gray70", linetype="dashed") +
               ggplot2::geom_point(fill="#56B4E9", shape=21, size=1.4) +

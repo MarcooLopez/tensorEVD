@@ -831,9 +831,9 @@ out$nGE &lt;- factor(out$nGE, levels = unique(out$nGE))
 measure &lt;- c(&quot;time&quot;,&quot;Frobenius&quot;,&quot;CMD&quot;,&quot;nPC&quot;,&quot;pPC&quot;)
 dat &lt;- melt_data(out, id=c(&quot;nGE&quot;,&quot;n&quot;,&quot;alpha&quot;),
                  measure=paste0(measure,&quot;_&quot;),
-                 value.name=measure, variable.name=&quot;method&quot;)</code></pre>
-<pre><code>## Loading required namespace: reshape2</code></pre>
-<pre class="r"><code>color1 &lt;- c(&#39;90%&#39;=&quot;skyblue1&quot;,&#39;95%&#39;=&quot;royalblue1&quot;,&#39;98%&#39;=&quot;navy&quot;)
+                 value.name=measure, variable.name=&quot;method&quot;)
+
+color1 &lt;- c(&#39;90%&#39;=&quot;skyblue1&quot;,&#39;95%&#39;=&quot;royalblue1&quot;,&#39;98%&#39;=&quot;navy&quot;)
 color2 &lt;- c(eigen=&quot;#E69F00&quot;, tensorEVD=&quot;#009E73&quot;)
 
 # Supplementary Figure 1: Computation times of the eigen and tensorEVD
@@ -843,10 +843,9 @@ figureS1 &lt;- make_plot(dat, x=&#39;alpha&#39;, y=&#39;time&#39;,
                       by.label=&quot;Sample size&quot;, ylab=&quot;Time (seconds) eigen&quot;,
                       ylab2=&quot;Time (seconds) tensorEVD&quot;,
                       sec.axis=TRUE, group.color=color2,
-                      scales=&quot;fixed&quot;, ylim=c(0,NA))</code></pre>
-<pre><code>## Loading required namespace: RColorBrewer</code></pre>
-<pre><code>## Loading required namespace: ggplot2</code></pre>
-<pre class="r"><code># Figure 1: Computation time ratio (eigen/tensorEVD)
+                      scales=&quot;fixed&quot;, ylim=c(0,NA))
+
+# Figure 1: Computation time ratio (eigen/tensorEVD)
 out$alpha2 &lt;- factor(paste0(out$alpha,&quot;%&quot;))
 out$time_ratio &lt;- out$time_eigen/out$time_tensorEVD
 
@@ -1302,7 +1301,7 @@ out$alpha &lt;- factor(paste0(100*out$alpha,&quot;%&quot;), levels=c(&quot;98%&q
 
 # Figure 5: Within environment prediction correlation
 rg &lt;- range(c(out$eigen,out$tensorEVD))
-if(requireNamespace(&quot;ggplot2&quot;)){
+if(requireNamespace(&quot;ggplot2&quot;, quietly=TRUE)){
   figure5 &lt;-  ggplot2::ggplot(out, ggplot2::aes(tensorEVD, eigen)) +
               ggplot2::geom_abline(color=&quot;gray70&quot;, linetype=&quot;dashed&quot;) +
               ggplot2::geom_point(fill=&quot;#56B4E9&quot;, shape=21, size=1.4) +
