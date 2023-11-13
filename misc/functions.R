@@ -22,7 +22,7 @@ melt_data <- function(data, id, measure,
     }
   }
 
-  if(requireNamespace("reshape2", silent=TRUE)){
+  if(requireNamespace("reshape2", quietly=TRUE)){
     out <- lapply(seq_along(measure), function(k){
       tmp <- grep(paste0("^",measure[k]),names0,value=T)
       dt <- data[,c(id, tmp)]
@@ -267,7 +267,7 @@ make_plot <- function(data, x, y, group, SD = NULL, nSD = 1,
   stopifnot(all(levels(DF$group) %in% names(group.color)))
 
   if(is.null(by.color)){
-    if(requireNamespace("RColorBrewer", silent=TRUE)){
+    if(requireNamespace("RColorBrewer", quietly=TRUE)){
       by.color <- RColorBrewer::brewer.pal(9, name="Blues")[seq(2,9,by=2)][1:nlevels(DF$by)]
     }
     names(by.color) <- levels(DF$by)
@@ -279,7 +279,7 @@ make_plot <- function(data, x, y, group, SD = NULL, nSD = 1,
   #xmin <- 1-(1+gap.by)/2
   #xmax <- nlevels(DF$x_by) + gap.by*(nlevels(DF$by)-1) + (1+gap.by)/2
 
-  if(requireNamespace("ggplot2", silent=TRUE)){
+  if(requireNamespace("ggplot2", quietly=TRUE)){
     if(is.null(ylabels)){
       ylabels <- ggplot2:: waiver()
     }
