@@ -1,0 +1,7 @@
+
+useDynLib(tensorEVD, .registration=TRUE)
+
+export(tensorEVD)
+export(Hadamard)
+export(Kronecker)
+export(Kronecker_cov)

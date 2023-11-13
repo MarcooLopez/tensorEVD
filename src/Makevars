@@ -1,0 +1,19 @@
+PKG_LIBS =  $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
+
+PKG_CFLAGS = -I.
+
+R_SOURCES = \
+			c_tensor_evd.o \
+			c_hadamard.o \
+			c_kronecker_cov.o \
+			init.o \
+			utils.o
+
+OBJECTS = $(R_SOURCES)
+
+all: $(SHLIB)
+
+$(SHLIB): $(OBJECTS)
+
+clean:
+		@rm -f $(OBJECTS)
