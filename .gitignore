@@ -8,3 +8,5 @@ src/*.dll
 .Rproj.user
 .DS_Store
 .DS_store
+^.*\.DS_Store$
+^.*\.Rhistory$
