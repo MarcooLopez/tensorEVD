@@ -1,3 +1,6 @@
+library(microbenchmark)
+library(tensorEVD)
+library(fastmatrix)
 library(ggplot2)
 
 # 1. Simulating small matrices
@@ -6,10 +9,10 @@ p = 50; q = 40
 A <- matrix(rnorm(m*n), ncol=n)
 B <- matrix(rnorm(p*q), ncol=q)
 
-res1 <- microbenchmark::microbenchmark(
-        'kronecker\n(base)'            = kronecker(A,B),
-        'kronecker.prod\n(fastmatrix)' = fastmatrix::kronecker.prod(A,B),
-        'Kronecker\n(tensorEVD)'       = tensorEVD::Kronecker(A,B),
+res1 <- microbenchmark(
+         'kronecker\n(base)'            = kronecker(A,B),
+         'kronecker.prod\n(fastmatrix)' = kronecker.prod(A,B),
+         'Kronecker\n(tensorEVD)'       = Kronecker(A,B),
        times = 20)
 
 tt1 <- paste0("'Kronecker('*A[",m,"*'x'*",n,"]*', '*B[",p,"*'x'*",q,"]*')'==K[",m*p,"*'x'*",n*q,"]")
@@ -20,10 +23,10 @@ p = 100; q = 100
 A <- matrix(rnorm(m*n), ncol=n)
 B <- matrix(rnorm(p*q), ncol=q)
 
-res2 <- microbenchmark::microbenchmark(
-       'kronecker\n(base)'            = kronecker(A,B),
-       'kronecker.prod\n(fastmatrix)' = fastmatrix::kronecker.prod(A,B),
-       'Kronecker\n(tensorEVD)'       = tensorEVD::Kronecker(A,B),
+res2 <- microbenchmark(
+         'kronecker\n(base)'            = kronecker(A,B),
+         'kronecker.prod\n(fastmatrix)' = kronecker.prod(A,B),
+         'Kronecker\n(tensorEVD)'       = Kronecker(A,B),
       times = 20)
 
 tt2 <- paste0("'Kronecker('*A[",m,"*'x'*",n,"]*', '*B[",p,"*'x'*",q,"]*')'==K[",m*p,"*'x'*",n*q,"]")

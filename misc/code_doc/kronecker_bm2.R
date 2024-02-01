@@ -1,4 +1,7 @@
+library(microbenchmark)
+library(tensorEVD)
 library(ggplot2)
+
 
 # 1. Simulating A and B matrices
 m = 100; n = 50
@@ -16,11 +19,11 @@ cols1 <- sample(seq(dm[2]), 0.20*dm[2])
 rows2 <- sample(seq(dm[1]), 2*dm[1], replace=TRUE)
 cols2 <- sample(seq(dm[2]), 2*dm[2], replace=TRUE)
 
-res <- microbenchmark::microbenchmark(
-      'Kronecker(A,B,rows,cols)_Small submatrix'  = tensorEVD::Kronecker(A,B,rows=rows1,cols=cols1),
-      'Kronecker(A,B)[rows,cols]_Small submatrix' = tensorEVD::Kronecker(A,B)[rows1,cols1],
-      'Kronecker(A,B,rows,cols)_Large submatrix'  = tensorEVD::Kronecker(A,B,rows=rows2,cols=cols2),
-      'Kronecker(A,B)[rows,cols]_Large submatrix' = tensorEVD::Kronecker(A,B)[rows2,cols2],
+res <- microbenchmark(
+       'Kronecker(A,B,rows,cols)_Small submatrix'  = Kronecker(A,B,rows=rows1,cols=cols1),
+       'Kronecker(A,B)[rows,cols]_Small submatrix' = Kronecker(A,B)[rows1,cols1],
+       'Kronecker(A,B,rows,cols)_Large submatrix'  = Kronecker(A,B,rows=rows2,cols=cols2),
+       'Kronecker(A,B)[rows,cols]_Large submatrix' = Kronecker(A,B)[rows2,cols2],
      times = 20)
 
 # 4. Making a barplot
