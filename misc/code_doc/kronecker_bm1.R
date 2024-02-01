@@ -14,7 +14,6 @@ res1 <- microbenchmark::microbenchmark(
 
 tt1 <- paste0("'Kronecker('*A[",m,"*'x'*",n,"]*', '*B[",p,"*'x'*",q,"]*')'==K[",m*p,"*'x'*",n*q,"]")
 
-
 # 2. Simulating large matrices
 m = 10; n = 15
 p = 100; q = 100
@@ -28,7 +27,6 @@ res2 <- microbenchmark::microbenchmark(
       times = 5)
 
 tt2 <- paste0("'Kronecker('*A[",m,"*'x'*",n,"]*', '*B[",p,"*'x'*",q,"]*')'==K[",m*p,"*'x'*",n*q,"]")
-
 
 # 3. Making a barplot
 out <- rbind(data.frame(group=tt1, expr=res1$expr, time=res1$time/1E9),
