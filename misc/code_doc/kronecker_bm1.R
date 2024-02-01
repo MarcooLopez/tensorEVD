@@ -10,7 +10,7 @@ res1 <- microbenchmark::microbenchmark(
         'kronecker\n(base)'            = kronecker(A,B),
         'kronecker.prod\n(fastmatrix)' = fastmatrix::kronecker.prod(A,B),
         'Kronecker\n(tensorEVD)'       = tensorEVD::Kronecker(A,B),
-       times = 5)
+       times = 20)
 
 tt1 <- paste0("'Kronecker('*A[",m,"*'x'*",n,"]*', '*B[",p,"*'x'*",q,"]*')'==K[",m*p,"*'x'*",n*q,"]")
 
@@ -24,7 +24,7 @@ res2 <- microbenchmark::microbenchmark(
        'kronecker\n(base)'            = kronecker(A,B),
        'kronecker.prod\n(fastmatrix)' = fastmatrix::kronecker.prod(A,B),
        'Kronecker\n(tensorEVD)'       = tensorEVD::Kronecker(A,B),
-      times = 5)
+      times = 20)
 
 tt2 <- paste0("'Kronecker('*A[",m,"*'x'*",n,"]*', '*B[",p,"*'x'*",q,"]*')'==K[",m*p,"*'x'*",n*q,"]")
 
