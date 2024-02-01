@@ -16,15 +16,15 @@ cols1 <- sample(seq(dm[2]), 0.10*dm[2], replace=TRUE)
 rows2 <- rep(seq(dm[1]), 2)
 cols2 <- rep(seq(dm[2]), 2)
 
-tmp <- microbenchmark::microbenchmark(
+res <- microbenchmark::microbenchmark(
       'Kronecker(A,B,rows,cols)_Small submatrix'  = tensorEVD::Kronecker(A,B,rows=rows1,cols=cols1),
       'Kronecker(A,B)[rows,cols]_Small submatrix' = tensorEVD::Kronecker(A,B)[rows1,cols1],
       'Kronecker(A,B,rows,cols)_Large submatrix'  = tensorEVD::Kronecker(A,B,rows=rows2,cols=cols2),
       'Kronecker(A,B)[rows,cols]_Large submatrix' = tensorEVD::Kronecker(A,B)[rows2,cols2],
-     times = 20)
+     times = 10)
 
 # 4. Making a barplot
-out <- data.frame(expr=tmp$expr, time=tmp$time/1E9)
+out <- data.frame(expr=res$expr, time=res$time/1E9)
 out <- data.frame(out, do.call(rbind,strsplit(as.character(out$expr),"_")))
 dat <- aggregate(time~X1+X2, data=out, FUN=mean)
 dat$sd <- aggregate(time~X1+X2, data=out, FUN=sd)$time
