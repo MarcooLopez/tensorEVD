@@ -34,8 +34,9 @@ out <- rbind(data.frame(group=tt1, expr=res1$expr, time=res1$time/1E9),
 dat <- aggregate(time~expr+group, data=out, FUN=mean)
 dat$sd <- aggregate(time~expr+group, data=out, FUN=sd)$time
 
-ggplot(dat, aes(expr,time)) + theme_bw() +
-  geom_bar(stat="identity", fill='lightyellow3', width=0.65) +
-  geom_errorbar(aes(ymin=time-sd, ymax=time+sd), width=0.2) +
-  labs(x=NULL, y="Time (seconds)") +
-  facet_wrap(~group, scales="free", labeller=label_parsed)
+pp <- ggplot(dat, aes(expr,time)) + theme_bw() +
+      geom_bar(stat="identity", fill='lightyellow3', width=0.65) +
+      geom_errorbar(aes(ymin=time-sd, ymax=time+sd), width=0.2) +
+      labs(x=NULL, y="Time (seconds)") +
+      facet_wrap(~group, scales="free", labeller=label_parsed)
+print(pp)
