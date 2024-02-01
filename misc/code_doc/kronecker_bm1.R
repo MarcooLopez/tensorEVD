@@ -1,4 +1,3 @@
-
 library(tensorEVD)
 library(fastmatrix)
 library(microbenchmark)
