@@ -8,13 +8,13 @@ B <- matrix(rnorm(p*q), ncol=q)
 
 dm <- c(m*p, n*q)   # dimension of the Kronecker
 
-# 2. Subsetting a matrix with 10% of rows/columns
-rows1 <- sample(seq(dm[1]), 0.10*dm[1], replace=TRUE)
-cols1 <- sample(seq(dm[2]), 0.10*dm[2], replace=TRUE)
+# 2. Subsetting a matrix with 20% of rows/columns
+rows1 <- sample(seq(dm[1]), 0.20*dm[1])
+cols1 <- sample(seq(dm[2]), 0.20*dm[2])
 
 # 3. Subsetting a matrix with 200% of rows/columns
-rows2 <- rep(seq(dm[1]), 2)
-cols2 <- rep(seq(dm[2]), 2)
+rows2 <- sample(seq(dm[1]), 2*dm[1], replace=TRUE)
+cols2 <- sample(seq(dm[2]), 2*dm[2], replace=TRUE)
 
 res <- microbenchmark::microbenchmark(
       'Kronecker(A,B,rows,cols)_Small submatrix'  = tensorEVD::Kronecker(A,B,rows=rows1,cols=cols1),
