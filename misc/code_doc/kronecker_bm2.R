@@ -6,7 +6,7 @@ p = 50; q = 100
 A <- matrix(rnorm(m*n), ncol=n)
 B <- matrix(rnorm(p*q), ncol=q)
 
-dm <- c(m*p, n*q)   # dimension of the Kronecker
+dm <- c(nrow(A)*nrow(B), ncol(A)*ncol(B))   # dimension of the Kronecker
 
 # 2. Subsetting a matrix with 20% of rows/columns
 rows1 <- sample(seq(dm[1]), 0.20*dm[1])
