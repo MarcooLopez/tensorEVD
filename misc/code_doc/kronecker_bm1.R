@@ -16,7 +16,7 @@ tt1 <- paste0("'Kronecker('*A[",m,"*'x'*",n,"]*', '*B[",p,"*'x'*",q,"]*')'==K[",
 
 
 # 2. Simulating large matrices
-m = 100; n = 150
+m = 10; n = 15
 p = 100; q = 100
 A <- matrix(rnorm(m*n), ncol=n)
 B <- matrix(rnorm(p*q), ncol=q)
