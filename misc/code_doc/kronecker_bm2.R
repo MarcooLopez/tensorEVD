@@ -24,19 +24,20 @@ res <- microbenchmark::microbenchmark(
      times = 10)
 
 # 4. Making a barplot
-out <- data.frame(expr=res$expr, time=res$time/1E9)
-out <- data.frame(out, do.call(rbind,strsplit(as.character(out$expr),"_")))
-dat <- aggregate(time~X1+X2, data=out, FUN=mean)
-dat$sd <- aggregate(time~X1+X2, data=out, FUN=sd)$time
+res <- data.frame(expr=res$expr, time=res$time/1E9)
+res <- data.frame(res, do.call(rbind,strsplit(as.character(res$expr),"_")))
+dat <- aggregate(time~X1+X2, data=res, FUN=mean)
+dat$sd <- aggregate(time~X1+X2, data=res, FUN=sd)$time
 dat$X2 <- gsub("Small",paste0(length(rows1),"x",length(cols1)),dat$X2)
 dat$X2 <- gsub("Large",paste0(length(rows2),"x",length(cols2)),dat$X2)
 
 title <- paste0("'Subsetting of Kronecker('*A[",m,"*'x'*",n,"]*', '*B[",p,"*'x'*",
                 q,"]*')'==K[",m*p,"*'x'*",n*q,"]")
 
-ggplot(dat, aes(X1,time)) + theme_bw() +
-  geom_bar(stat="identity", fill='lightyellow3', width=0.6) +
-  geom_errorbar(aes(ymin=time-sd, ymax=time+sd), width=0.1) +
-  labs(x=NULL, y="Time (seconds)", title=parse(text=title)) +
-  facet_wrap(~X2, scales="free") +
-  theme(plot.title=element_text(hjust=0.5))
+pp <- ggplot(dat, aes(X1,time)) + theme_bw() +
+      geom_bar(stat="identity", fill='lightyellow3', width=0.6) +
+      geom_errorbar(aes(ymin=time-sd, ymax=time+sd), width=0.1) +
+      labs(x=NULL, y="Time (seconds)", title=parse(text=title)) +
+      facet_wrap(~X2, scales="free") +
+      theme(plot.title=element_text(hjust=0.5))
+print(pp)
