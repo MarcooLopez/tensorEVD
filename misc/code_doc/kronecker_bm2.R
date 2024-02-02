@@ -3,8 +3,8 @@ library(tensorEVD)
 library(ggplot2)
 
 # 1. Simulating A and B matrices
-m = 100; n = 50
-p = 50; q = 100
+m = 100; n = 30
+p = 60; q = 200
 A <- matrix(rnorm(m*n), ncol=n)
 B <- matrix(rnorm(p*q), ncol=q)
 
@@ -30,15 +30,14 @@ res <- data.frame(expr=res$expr, time=res$time/1E9)
 res <- data.frame(res, do.call(rbind,strsplit(as.character(res$expr),"_")))
 dat <- aggregate(time~X1+X2, data=res, FUN=median)
 dat$X2 <- paste0(dat$X2,": ",ifelse(dat$X2=="Small submatrix",
-                                    paste0(length(rows1),"x",length(cols1)),
-                                    paste0(length(rows2),"x",length(cols2))))
+                                    paste(length(rows1),"x",length(cols1)),
+                                    paste(length(rows2),"x",length(cols2))))
 
-title <- paste0("'Subsetting of Kronecker('*A[",m,"*'x'*",n,"]*', '*B[",p,"*'x'*",
-                q,"]*')'==K[",m*p,"*'x'*",n*q,"]")
+title <- bquote('Subsetting of Kronecker('*A[.(m)*'x'*.(n)]*', '*B[.(p)*'x'*.(q)]*')'==K[.(m*p)*'x'*.(n*q)])
 
 pp <- ggplot(dat, aes(X1,time)) + theme_bw() +
       geom_bar(stat="identity", fill='lightyellow3', width=0.6) +
-      labs(x=NULL, y="Time (seconds)", title=parse(text=title)) +
+      labs(x=NULL, y="Time (seconds)", title=title) +
       facet_wrap(~X2, scales="free") +
       theme(plot.title=element_text(hjust=0.5))
 print(pp)

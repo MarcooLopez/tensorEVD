@@ -3,7 +3,7 @@ library(tensorEVD)
 library(fastmatrix)
 library(ggplot2)
 
-# 1. Simulating small matrices
+# 1. Simulating a small Kronecker product
 m = 50; n = 60
 p = 40; q = 50
 A <- matrix(rnorm(m*n), ncol=n)
@@ -17,7 +17,7 @@ res1 <- microbenchmark(
 
 tt1 <- paste0("'Kronecker('*A[",m,"*'x'*",n,"]*', '*B[",p,"*'x'*",q,"]*')'==K[",m*p,"*'x'*",n*q,"]")
 
-# 2. Simulating large matrices
+# 2. Simulating a large Kronecker product
 m = 100; n = 120
 p = 80; q = 100
 A <- matrix(rnorm(m*n), ncol=n)
