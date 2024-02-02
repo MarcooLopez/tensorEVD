@@ -21,7 +21,7 @@ colsB <- sample(seq(ncol(B)), dm[2], replace=TRUE)
 res1 <- microbenchmark(
          'A[rowsA,colsA]*B[rowsB,colsB]' = A[rowsA,colsA]*B[rowsB,colsB],
          'Hadamard(A,B,rowsA,rowsB,colsA,colsB)' = Hadamard(A,B,rowsA,rowsB,colsA,colsB),
-       times = 5)
+       times = 30)
 
 tt1 <- paste0("Small Hadamard: ",length(rowsA)," x ",length(colsA))
 
@@ -37,7 +37,7 @@ colsB <- sample(seq(ncol(B)), dm[2], replace=TRUE)
 res2 <- microbenchmark(
          'A[rowsA,colsA]*B[rowsB,colsB]' = A[rowsA,colsA]*B[rowsB,colsB],
          'Hadamard(A,B,rowsA,rowsB,colsA,colsB)' = Hadamard(A,B,rowsA,rowsB,colsA,colsB),
-       times = 30)
+       times = 5)
 
 tt2 <- paste0("Large Hadamard: ",length(rowsA)," x ",length(colsA))
 
@@ -48,9 +48,12 @@ dat <- aggregate(time~expr+group, data=res, FUN=median)
 
 title <- bquote('Hadamard between submatrices of '*A[.(m)*'x'*.(n)]*' and '*B[.(p)*'x'*.(q)])
 
-pp <- ggplot(dat, aes(expr,time)) + theme_bw() +
-      geom_bar(stat="identity", fill='lightyellow3', width=0.6) +
-      labs(x=NULL, y="Time (seconds)", title=title) +
+pp <- ggplot(dat, aes(expr,time,fill=expr)) + theme_bw() +
+      geom_bar(stat="identity", width=0.6) +
+      labs(x=NULL, y="Time (seconds)", title=title, fill=NULL) +
       facet_wrap(~group, scales="free") +
-      theme(plot.title=element_text(hjust=0.5))
+      theme(plot.title=element_text(hjust=0.5),
+            axis.text.x=element_blank(), legend.position="bottom",
+            legend.spacing.x=unit(20,'pt'),
+            legend.text=element_text(margin=margin(l=-18)))
 print(pp)
