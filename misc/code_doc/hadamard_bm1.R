@@ -21,7 +21,7 @@ colsB <- sample(seq(ncol(B)), dm[2], replace=TRUE)
 res1 <- microbenchmark(
          'A[rowsA,colsA]*B[rowsB,colsB]' = A[rowsA,colsA]*B[rowsB,colsB],
          'Hadamard(A,B,rowsA,rowsB,colsA,colsB)' = Hadamard(A,B,rowsA,rowsB,colsA,colsB),
-       times = 30)
+       times = 5)
 
 tt1 <- paste0("Small Hadamard: ",length(rowsA)," x ",length(colsA))
 
