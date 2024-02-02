@@ -9,6 +9,7 @@ p = 50; q = 40
 A <- matrix(rnorm(m*n), ncol=n)
 B <- matrix(rnorm(p*q), ncol=q)
 
+gc()
 res1 <- microbenchmark(
          'kronecker\n(base)'            = kronecker(A,B),
          'kronecker.prod\n(fastmatrix)' = kronecker.prod(A,B),
@@ -18,11 +19,12 @@ res1 <- microbenchmark(
 tt1 <- paste0("'Kronecker('*A[",m,"*'x'*",n,"]*', '*B[",p,"*'x'*",q,"]*')'==K[",m*p,"*'x'*",n*q,"]")
 
 # 2. Simulating large matrices
-m = 100; n = 150
-p = 100; q = 100
+m = 100; n = 120
+p = 80; q = 100
 A <- matrix(rnorm(m*n), ncol=n)
 B <- matrix(rnorm(p*q), ncol=q)
 
+gc()
 res2 <- microbenchmark(
          'kronecker\n(base)'            = kronecker(A,B),
          'kronecker.prod\n(fastmatrix)' = kronecker.prod(A,B),

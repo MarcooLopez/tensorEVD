@@ -19,6 +19,7 @@ cols1 <- sample(seq(dm[2]), 0.20*dm[2])
 rows2 <- sample(seq(dm[1]), 2*dm[1], replace=TRUE)
 cols2 <- sample(seq(dm[2]), 2*dm[2], replace=TRUE)
 
+gc()
 res <- microbenchmark(
        'Kronecker(A,B,rows,cols)_Small submatrix'  = Kronecker(A,B,rows=rows1,cols=cols1),
        'Kronecker(A,B)[rows,cols]_Small submatrix' = Kronecker(A,B)[rows1,cols1],
