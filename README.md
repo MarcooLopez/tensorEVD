@@ -29,7 +29,7 @@ help(tensorEVD)
 ## Examples
 Here we present examples on the use of the functions included in the package.
 
-* [Kronecker product](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/master/inst/doc/kronnecker.html)
+* [Kronecker product](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/master/inst/doc/kronecker.html)
 * [Hadamard product](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/master/inst/doc/hadamard.html)
 * [Tensor EVD](https://github.com/MarcooLopez/tensorEVD/blob/main/inst/md/tensorEVD.md)
 
