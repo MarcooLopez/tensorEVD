@@ -23,7 +23,7 @@ res <- microbenchmark(
        'Kronecker(A,B)[rows,cols]_Small submatrix' = Kronecker(A,B)[rows1,cols1],
        'Kronecker(A,B,rows,cols)_Large submatrix'  = Kronecker(A,B,rows=rows2,cols=cols2),
        'Kronecker(A,B)[rows,cols]_Large submatrix' = Kronecker(A,B)[rows2,cols2],
-     times = 30)
+     times = 5)
 
 # 4. Making a barplot
 res <- data.frame(expr=res$expr, time=res$time/1E9)
