@@ -4,8 +4,8 @@ library(fastmatrix)
 library(ggplot2)
 
 # 1. Simulating a small Kronecker product
-m = 50; n = 60
-p = 40; q = 50
+m = 50; n = 75
+p = 40; q = 60
 A <- matrix(rnorm(m*n), ncol=n)
 B <- matrix(rnorm(p*q), ncol=q)
 
@@ -18,8 +18,8 @@ res1 <- microbenchmark(
 tt1 <- paste0("'Kronecker('*A[",m,"*'x'*",n,"]*', '*B[",p,"*'x'*",q,"]*')'==K[",m*p,"*'x'*",n*q,"]")
 
 # 2. Simulating a large Kronecker product
-m = 100; n = 120
-p = 80; q = 100
+m = 100; n = 150
+p = 80; q = 120
 A <- matrix(rnorm(m*n), ncol=n)
 B <- matrix(rnorm(p*q), ncol=q)
 

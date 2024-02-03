@@ -21,12 +21,12 @@ colsB <- sample(seq(ncol(B)), dm[2], replace=TRUE)
 res1 <- microbenchmark(
          'A[rowsA,colsA]*B[rowsB,colsB]' = A[rowsA,colsA]*B[rowsB,colsB],
          'Hadamard(A,B,rowsA,rowsB,colsA,colsB)' = Hadamard(A,B,rowsA,rowsB,colsA,colsB),
-       times = 5)
+       times = 30)
 
 tt1 <- paste0("Small Hadamard: ",length(rowsA)," x ",length(colsA))
 
 # 3. Making Hadamard for a large matrix
-dm <- c(12000, 12000)  # dimension of the Hadamard
+dm <- c(15000, 15000)  # dimension of the Hadamard
 
 rowsA <- sample(seq(nrow(A)), dm[1], replace=TRUE)
 colsA <- sample(seq(ncol(A)), dm[2], replace=TRUE)
@@ -37,7 +37,7 @@ colsB <- sample(seq(ncol(B)), dm[2], replace=TRUE)
 res2 <- microbenchmark(
          'A[rowsA,colsA]*B[rowsB,colsB]' = A[rowsA,colsA]*B[rowsB,colsB],
          'Hadamard(A,B,rowsA,rowsB,colsA,colsB)' = Hadamard(A,B,rowsA,rowsB,colsA,colsB),
-       times = 5)
+       times = 30)
 
 tt2 <- paste0("Large Hadamard: ",length(rowsA)," x ",length(colsA))
 
