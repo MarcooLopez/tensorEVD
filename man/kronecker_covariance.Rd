@@ -3,8 +3,9 @@
 \alias{Kronecker_cov}
 \title{Kronecker variance matrix penalization}
 \usage{
-Kronecker_cov(K, Sigma = NULL, Theta, byrow = FALSE,
-              rows = NULL, cols = NULL, drop = TRUE)
+Kronecker_cov(K, Sigma = 1, Theta, byrow = FALSE,
+              rows = NULL, cols = NULL, drop = TRUE,
+              inplace = FALSE)
               
 }
 \arguments{
@@ -21,6 +22,8 @@ Kronecker_cov(K, Sigma = NULL, Theta, byrow = FALSE,
 \item{cols}{(integer) Index which columns of the Kronecker variance are to be returned. Default \code{cols=NULL} return all the columns}
 
 \item{drop}{Either \code{TRUE} or \code{FALSE} to whether return a uni-dimensional vector when output is a matrix with either 1 row or 1 column as per the \code{rows} and \code{cols} arguments}
+
+\item{inplace}{\code{TRUE} or \code{FALSE} to whether operate directly on matrix \code{K} when \code{Sigma} and \code{Theta} are scalars. This is possible only when \code{rows=NULL} and \code{cols=NULL}. When \code{TRUE} the output will be overwritten on the same address occupied by \code{K}. Default \code{inplace=FALSE}}
 
 }
 \value{
@@ -87,14 +90,14 @@ Specific rows and columns from this Kronecker can be obtained as per the \code{r
   # ==============================================
   # Example 1. Add unique value 
   # ==============================================
-  theta = 1.0
+  theta = 10.0
   G = Kronecker_cov(K, Sigma, Theta = theta)
 
   # it must equal to:
   I0 = diag(n)    # diagonal matrix of dimension n
   Theta0 = matrix(theta, nrow=p, ncol=p)
   G0 = kronecker(Sigma, K) + kronecker(Theta0, I0)
-  max(abs(G-G0))
+  all.equal(G,G0)
   
   # ==============================================
   # Example 2. Add feature-specific value 
@@ -105,7 +108,7 @@ Specific rows and columns from this Kronecker can be obtained as per the \code{r
   # it must equal to:
   Theta0 = diag(theta)
   G0 = kronecker(Sigma, K) + kronecker(Theta0, I0)
-  max(abs(G-G0))
+  all.equal(G,G0)
   
   # ==============================================
   # Example 3. Add specific values within same feature
@@ -116,14 +119,14 @@ Specific rows and columns from this Kronecker can be obtained as per the \code{r
 
   # it must equal to:
   G0 = kronecker(Sigma, K) + kronecker(Theta, I0)
-  max(abs(G-G0))
+  all.equal(G,G0)
   
   # Assume that random matrix X is stacked row-wise
   G = Kronecker_cov(K, Sigma, Theta = Theta, byrow = TRUE)
 
   # in this case the kronecker is inverted:
   G0 = kronecker(K, Sigma) + kronecker(I0, Theta)
-  max(abs(G-G0))
+  all.equal(G,G0)
   \donttest{
   # ==============================================
   # Extra: Selecting specific entries of the output
@@ -143,7 +146,7 @@ Specific rows and columns from this Kronecker can be obtained as per the \code{r
   # this is preferable instead of:
   # I0 = diag(n)
   # G0 = (kronecker(Sigma, K) + kronecker(Theta, I0))[rows,cols]
-  # max(abs(G-G0))
+  # all.equal(G,G0)
   }
 
 }

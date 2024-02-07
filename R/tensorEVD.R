@@ -1,24 +1,26 @@
 
-# V1 <- d1 <- V2 <- d2 <- NULL; d.min = .Machine$double.eps; verbose= TRUE
+# EVD1 <- EVD2 <- NULL; d.min = .Machine$double.eps; verbose= TRUE
 tensorEVD <- function(K1, K2, ID1, ID2, alpha = 1.0,
-                      V1 = NULL, d1 = NULL, V2 = NULL, d2 = NULL,
+                      EVD1 = NULL, EVD2 = NULL,
                       d.min = .Machine$double.eps,
                       make.dimnames = FALSE,
-                      verbose = FALSE){
-
+                      verbose = FALSE)
+{
     isEigen1 <- isEigen2 <- FALSE
     names1 <- names2 <- NULL
     # For K1
     if(missing(K1)){
-      if(is.null(V1) | is.null(d1)){
-        stop("'V1' and 'd1' must be provided when 'K1' is missing")
+      flag <- ifelse(is.list(EVD1),all(c("values","vectors")%in%names(EVD1))&(length(EVD1)==2),FALSE)
+      if(!flag){
+        stop("A list type object 'EVD1' must be provided when 'K1' is missing.",
+             "\nThis should contain 'values' and 'vectors' as per the 'eigen' function")
       }
-      dm1 <- dim(V1)
-      if((sum(dm1)/2)^2 != length(V1)){
-         stop("'V1' must be a squared matrix with eigenvectors in columns")
+      dm1 <- dim(EVD1$vectors)
+      if((sum(dm1)/2)^2 != length(EVD1$vectors)){
+         stop("'EVD1$vectors' must be a squared matrix with eigenvectors in columns")
       }
-      stopifnot(dm1[2] == length(d1))
-      names1 <- rownames(V1)
+      stopifnot(dm1[2] == length(EVD1$values))
+      names1 <- rownames(EVD1$vectors)
       isEigen1 <- TRUE
 
     }else{
@@ -35,15 +37,17 @@ tensorEVD <- function(K1, K2, ID1, ID2, alpha = 1.0,
 
     # For K2
     if(missing(K2)){
-      if(is.null(V2) | is.null(d2)){
-        stop("'V2' and 'd2' must be provided when 'K2' is missing")
+      flag <- ifelse(is.list(EVD2),all(c("values","vectors")%in%names(EVD2))&(length(EVD2)==2),FALSE)
+      if(!flag){
+        stop("A list type object 'EVD2' must be provided when 'K2' is missing.",
+             "\nThis should contain 'values' and 'vectors' as per the 'eigen' function")
       }
-      dm2 <- dim(V2)
-      if((sum(dm2)/2)^2 != length(V2)){
-         stop("'V2' must be a squared matrix with eigenvectors in columns")
+      dm2 <- dim(EVD2$vectors)
+      if((sum(dm2)/2)^2 != length(EVD2$vectors)){
+         stop("'EVD2$vectors' must be a squared matrix with eigenvectors in columns")
       }
-      stopifnot(dm2[2] == length(d2))
-      names2 <- rownames(V2)
+      stopifnot(dm2[2] == length(EVD2$values))
+      names2 <- rownames(EVD2$vectors)
       isEigen2 <- TRUE
 
     }else{
@@ -71,16 +75,17 @@ tensorEVD <- function(K1, K2, ID1, ID2, alpha = 1.0,
       stop("'ID2' could not be matched to 'K2'")
     }
 
-    if(isEigen1){
-      EVD1 <- list(vectors=V1, values=d1)
-    }else{
+    if(!isEigen1){
       EVD1 <- eigen(K1, symmetric=TRUE)
+      if(has_names(K1)){
+        rownames(EVD1$vectors) <- rownames(K1)
+      }
     }
-
-    if(isEigen2){
-      EVD2 <- list(vectors=V2, values=d2)
-    }else{
+    if(!isEigen2){
       EVD2 <- eigen(K2, symmetric=TRUE)
+      if(has_names(K2)){
+        rownames(EVD2$vectors) <- rownames(K2)
+      }
     }
 
     #dyn.load("c_tensor_evd.so")

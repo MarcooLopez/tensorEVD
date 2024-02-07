@@ -4,7 +4,8 @@
 \title{Kronecker product}
 \usage{
 Kronecker(A, B, rows = NULL, cols = NULL, 
-          make.dimnames = FALSE, drop = TRUE) 
+          make.dimnames = FALSE, drop = TRUE,
+          inplace = FALSE) 
 
 }
 \arguments{
@@ -18,7 +19,9 @@ Kronecker(A, B, rows = NULL, cols = NULL,
 
 \item{drop}{Either \code{TRUE} or \code{FALSE} to whether return a uni-dimensional vector when output is a matrix with either 1 row or 1 column as per the \code{rows} and \code{cols} arguments}
 
-\item{make.dimnames}{\code{TRUE} or \code{FALSE} to whether add rownames and colnames attributes to the output}
+\item{make.dimnames}{\code{TRUE} or \code{FALSE} to whether add \code{rownames} and \code{colnames} attributes to the output}
+
+\item{inplace}{\code{TRUE} or \code{FALSE} to whether operate directly on one input matrix (\code{A} or \code{B}) when the other one is a scalar. This is possible only when \code{rows=NULL} and \code{cols=NULL}. When \code{TRUE} the output will be overwritten on the same address occupied by the input that is not scalar. Default \code{inplace=FALSE}}
 }
 \value{
 Returns the Kronecker product matrix. It can be a sub-matrix of it as per the \code{rows} and \code{cols} arguments.
@@ -58,11 +61,10 @@ The function computes this sub-matrix of the Kronecker product directly from \if
   
   # Kronecker product of 2 vectors
   A = rnorm(3)
-  B = rnorm(4) 
-  K = Kronecker(A, B)
+  B = rnorm(2) 
+  (K = Kronecker(A, B))
   # it must equal when using from the R-base package:
-  K0 = kronecker(A, B)
-  max(abs(K-K0))
+  (K0 = kronecker(A, B))
   
   # Kronecker product of 2 matrices
   A = matrix(rnorm(12), ncol=3)
@@ -70,7 +72,7 @@ The function computes this sub-matrix of the Kronecker product directly from \if
   K = Kronecker(A, B)
   # (it must equal (but faster) to:)
   K0 = kronecker(A, B)
-  max(abs(K-K0))
+  all.equal(K,K0)
   \donttest{
   # Subsetting rows/columns from the Kronecker
   A = matrix(rnorm(100*150), ncol=150)
@@ -80,7 +82,7 @@ The function computes this sub-matrix of the Kronecker product directly from \if
   K = Kronecker(A, B, rows=rows, cols=cols)
   # (it must equal (but much faster) to:)
   K0 = kronecker(A, B)[rows,cols]
-  max(abs(K-K0))
+  all.equal(K,K0)
   }
 
 }

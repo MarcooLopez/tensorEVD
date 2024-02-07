@@ -10,18 +10,20 @@
 //            Kronecker(K,Sigma) + Kronecker(I,Theta)
 //
 //====================================================================
-
 SEXP R_kronecker_cov(SEXP nK_, SEXP K_, SEXP nS_, SEXP Sigma_, SEXP Theta_,
                      SEXP byrow_,
                      SEXP nrow_, SEXP ncol_, SEXP out_,
-                     SEXP irow_, SEXP icol_, SEXP drop_)
+                     SEXP irow_, SEXP icol_, SEXP drop_,
+                     SEXP inplace_)
 {
+    int nprotect = 5;
     int nrow=INTEGER_VALUE(nrow_);
     int ncol=INTEGER_VALUE(ncol_);
     int nK=INTEGER_VALUE(nK_);
     int nS=INTEGER_VALUE(nS_);
     int byrow=asLogical(byrow_);
     int drop=asLogical(drop_);
+    int inplace=asLogical(inplace_);
     int nirow=Rf_length(irow_);
     int nicol=Rf_length(icol_);
 
@@ -39,19 +41,6 @@ SEXP R_kronecker_cov(SEXP nK_, SEXP K_, SEXP nS_, SEXP Sigma_, SEXP Theta_,
 
     PROTECT(icol_=AS_INTEGER(icol_));
     int *icol=INTEGER_POINTER(icol_);
-
-    SEXP out2_;
-    if((nrow==1) || (ncol==1))
-    {
-      if(drop){
-        out2_ = PROTECT(Rf_allocVector(REALSXP, (long long)nrow*ncol));
-      }else{
-        out2_ = PROTECT(Rf_allocMatrix(REALSXP, nrow, ncol));
-      }
-    }else{
-      out2_ = PROTECT(Rf_allocMatrix(REALSXP, nrow, ncol));
-    }
-    double *out2=NUMERIC_POINTER(out2_);
 
     int *irowS=(int *) R_alloc(nrow, sizeof(int)); // For Sigma
     int *irowK=(int *) R_alloc(nrow, sizeof(int)); // For K
@@ -75,6 +64,27 @@ SEXP R_kronecker_cov(SEXP nK_, SEXP K_, SEXP nS_, SEXP Sigma_, SEXP Theta_,
       }
     }
 
+    SEXP out2_;
+    double *out2;
+    if(inplace){
+      //out2_ = R_NilValue;
+      out2_ = K_;
+      out2 = K;
+    }else{
+      if((nrow==1) || (ncol==1))
+      {
+        if(drop){
+          out2_ = PROTECT(Rf_allocVector(REALSXP, (long long)nrow*ncol));
+        }else{
+          out2_ = PROTECT(Rf_allocMatrix(REALSXP, nrow, ncol));
+        }
+      }else{
+        out2_ = PROTECT(Rf_allocMatrix(REALSXP, nrow, ncol));
+      }
+      out2 = NUMERIC_POINTER(out2_);
+      nprotect++;
+    }
+
     //Rprintf(" Making kronecker multiplication by matrix 'a'...\n");
     size_t i, j;
     double a = 1.0;
@@ -93,7 +103,7 @@ SEXP R_kronecker_cov(SEXP nK_, SEXP K_, SEXP nS_, SEXP Sigma_, SEXP Theta_,
       }
     }
 
-    UNPROTECT(6);
+    UNPROTECT(nprotect);
 
     return(out2_);
 }

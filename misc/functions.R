@@ -125,7 +125,7 @@ gg_color_hue <- function(n) {
 #=========================================================
 make_plot <- function(data, x, y, group, SD = NULL, nSD = 1,
                       by = NULL, by.label = by,
-                      facet = NULL, type = c("bar","line"),
+                      facet = NULL, facet2 = NULL, type = c("bar","line"),
                       group.label = capitalize(group),
                       xlab = x, ylab = y, ylim = c(NA,NA),
                       pymin = 0.4, hline = NULL, hline.color = "blue",
@@ -135,16 +135,20 @@ make_plot <- function(data, x, y, group, SD = NULL, nSD = 1,
                       sec.axis = FALSE, ylab2 = NULL,
                       group.color = NULL, by.color = NULL,
                       errorbar.size = line.width, errorbar.width = 0.35,
-                      by.alpha = 0.4, expand.y = c(0.03,0.03),
-                      gap.by = 0.3, gap.x = 0.15,
+                      by.alpha = 1.0, expand.x = c(0.025,0.025), expand.y = c(0.025,0.025),
+                      gap.by = 0.35, gap.x = 0.15,
                       rect.by.color = "gray60", rect.by.height = Inf,
-                      ylabels = NULL, scales = "fixed")
+                      #breaks.x = NULL, labels.x = NULL,
+                      breaks.y = NULL, labels.y = NULL, facet.type = c("wrap","grid"),
+                      scales = "fixed", ...)
 {
   type <- match.arg(type)
   scales <- match.arg(scales, choices=c("fixed","free_x","free_y","free"))
   text.scales <- match.arg(text.scales, choices=c("fixed","free"))
+  facet.type <- match.arg(facet.type)
+  args0 <- list(...)
 
-  names0 <- c(facet, x, by, group)
+  names0 <- c(facet, facet2, x, by, group)
   fm <- paste0(y,' ~ ',paste(names0,collapse="+"))
   DF <- aggregate(formula(fm), data=data, FUN=mean)
   colnames(DF)[colnames(DF)==y] <- "mean"
@@ -168,7 +172,12 @@ make_plot <- function(data, x, y, group, SD = NULL, nSD = 1,
   }else{
     DF$facet <- DF[,facet]
   }
-  tmp <- setdiff(names0, c("x","group","facet","by"))
+  if(is.null(facet2)){
+    DF$facet2 <- factor("facet2")
+  }else{
+    DF$facet2 <- DF[,facet2]
+  }
+  tmp <- setdiff(names0, c("x","group","facet","facet2","by"))
   if(length(tmp)>0){
     DF <- DF[,!colnames(DF) %in% tmp]
   }
@@ -182,6 +191,9 @@ make_plot <- function(data, x, y, group, SD = NULL, nSD = 1,
   if(!is.factor(DF$facet)){
     DF$facet <- factor(DF$facet)
   }
+  if(!is.factor(DF$facet2)){
+    DF$facet2 <- factor(DF$facet2)
+  }
   if(!is.factor(DF$by)){
     DF$by <- factor(DF$by)
   }
@@ -189,15 +201,35 @@ make_plot <- function(data, x, y, group, SD = NULL, nSD = 1,
   bw <- (1-gap.x)/nlevels(DF$group)
   DF$x_by <- DF$by:DF$x
   DF$x0 <- as.numeric(DF$x_by) + gap.by*(as.numeric(DF$by)-1)
-  DF$xm <- DF$x0
-  if(type=="bar"){
+  if(type == "bar"){
     DF$xm <- (DF$x0-0.5) + (gap.x/2) + bw*(as.numeric(DF$group)-1) + bw/2
+    DF$x1 <- DF$xm - bar.width*bw/2
+    DF$x2 <- DF$xm + bar.width*bw/2
   }
-  DF$x1 <- DF$xm - bar.width*bw/2
-  DF$x2 <- DF$xm + bar.width*bw/2
+  if(type == "line"){
+    DF$xm <- DF$x0
+    DF$x1 <- DF$xm #- bar.width*bw/2
+    DF$x2 <- DF$xm #+ bar.width*bw/2
+  }
+
+  # Breaks and Labels for y axis
+  if(is.null(breaks.y)){
+    if(requireNamespace("RColorBrewer", quietly=TRUE)){
+      breaks.y <- ggplot2::waiver()
+    }
+  }else{
+    if(!scales %in% c("fixed","free_x")){
+      stop("'breaks.y' can be applied only with 'scales' equal to 'free' or 'free_x'")
+    }
+  }
+  if(is.null(labels.y)){
+    if(requireNamespace("RColorBrewer", quietly=TRUE)){
+      labels.y <- ggplot2::waiver()
+    }
+  }
 
   # Limits for y
-  DF <- do.call(rbind,lapply(split(DF, DF$facet),function(df){
+  DF <- do.call(rbind,lapply(split(DF, paste(DF$facet,DF$facet2)),function(df){
     rr <- c(min(df$mean-df$sd), max(df$mean+df$sd))
     tmp <- rr[1] - pymin*diff(rr)
     df$y1 <- ifelse(is.na(ylim[1]), ifelse(tmp<0,0,tmp), ylim[1])
@@ -214,7 +246,7 @@ make_plot <- function(data, x, y, group, SD = NULL, nSD = 1,
 
   #  Data for rectangles if separated by 'by' parameter
   ry <- diff(c(min(DF$y1), max(DF$mean+DF$sd)))
-  datby <- do.call(rbind,lapply(split(DF,paste(DF$facet,DF$by)),function(df){
+  datby <- do.call(rbind,lapply(split(DF,paste(DF$facet,DF$facet2,DF$by)),function(df){
     df <- df[df$x==levels(DF$x)[1] & df$group==levels(DF$group)[1],]
     df$x1 <- df$x0 - (1+gap.by)/2
     df$x2 <- df$x0 + (1+gap.by)/2 + nlevels(DF$x) - 1
@@ -257,8 +289,8 @@ make_plot <- function(data, x, y, group, SD = NULL, nSD = 1,
   }
   hjust <- ifelse(text.just==0, 0, 1)
 
-  breaks0 <- unlist(lapply(split(DF,DF$x_by),function(x)x$x0[1]))
-  labels0 <- unlist(lapply(strsplit(names(breaks0),":"),function(x)x[2]))
+  breaks.x <- unlist(lapply(split(DF,DF$x_by),function(x)x$x0[1]))
+  labels.x <- unlist(lapply(strsplit(names(breaks.x),":"),function(x)x[2]))
 
   if(is.null(group.color)){
     group.color <- gg_color_hue(nlevels(DF$group))
@@ -279,20 +311,25 @@ make_plot <- function(data, x, y, group, SD = NULL, nSD = 1,
   #xmin <- 1-(1+gap.by)/2
   #xmax <- nlevels(DF$x_by) + gap.by*(nlevels(DF$by)-1) + (1+gap.by)/2
 
-  if(requireNamespace("ggplot2", quietly=TRUE)){
-    if(is.null(ylabels)){
-      ylabels <- ggplot2:: waiver()
-    }
+  legend.position <- "right"; legend.justification <- "center"; legend.margin <- 0*ggplot2::margin(t=0,r=1,b=1,l=1)
+  if("legend.position" %in% names(args0)) legend.position <- args0[['legend.position']]
+  if("legend.justification" %in% names(args0)) legend.justification <- args0[['legend.justification']]
+  if("legend.margin" %in% names(args0)) legend.margin <- args0[['legend.margin']]
 
+  if(requireNamespace("ggplot2", quietly=TRUE)){
     theme0 <- ggplot2::theme(
                     strip.text.x = ggplot2::element_text(size=7.5, margin=ggplot2::margin(t=1.2,b=1.2)),
-                    legend.justification=c("top"),
+                    strip.text.y = ggplot2::element_text(size=7.5, margin=ggplot2::margin(l=1.2,r=1.2)),
+                    legend.position=legend.position,
+                    legend.justification=legend.justification,
                     panel.grid.minor.x=ggplot2::element_blank(),
                     panel.grid.major.x=ggplot2::element_blank(),
                     panel.grid.minor.y=ggplot2::element_blank(),
                     legend.key.size=ggplot2::unit(0.85,"line"),
-                    legend.margin=ggplot2::margin(0),
-                    legend.box.margin=5*ggplot2::margin(1,1,1,-1),
+                    #legend.margin=ggplot2::margin(0),
+                    #legend.box.margin=8*ggplot2::margin(t=-1,r=0,b=-1,l=-1),
+                    legend.margin=legend.margin,
+                    legend.box.margin=ggplot2::margin(0),
                     legend.title = ggplot2::element_text(size=9),
                     legend.text = ggplot2::element_text(size=7),
                     axis.text = ggplot2::element_text(size=7),
@@ -325,9 +362,10 @@ make_plot <- function(data, x, y, group, SD = NULL, nSD = 1,
     }
 
     # Making the plot
+    #print(range(DF$mean))
     pp <- ggplot2::ggplot(DF, ggplot2::aes(y=mean,x=xm)) +
-          ggplot2::scale_x_continuous(breaks=breaks0, labels=labels0, limits=c(xmin,xmax),
-                                      expand=ggplot2::expansion(mult = c(0.02,0.02)))
+          ggplot2::scale_x_continuous(breaks=breaks.x, labels=labels.x, limits=c(xmin,xmax),
+                                      expand=ggplot2::expansion(mult = expand.x))
     if(!is.null(by)){
       pp <- pp +
           ggplot2::geom_rect(ggplot2::aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2, fill=by),
@@ -336,6 +374,7 @@ make_plot <- function(data, x, y, group, SD = NULL, nSD = 1,
           ggplot2::guides(fill = ggplot2::guide_legend(override.aes=list(size=1.5, color="gray35"))) +
           ggnewscale::new_scale_fill() +
           ggplot2::geom_vline(ggplot2::aes(xintercept=x2), data=datby2, color=rect.by.color)
+      ylim <- c(NA,NA)
     }
     if(type == "bar"){
       pp <- pp + ggplot2::geom_rect(ggplot2::aes(xmin=x1, xmax=x2, ymin=y1, ymax=mean, fill=group)) +
@@ -351,7 +390,7 @@ make_plot <- function(data, x, y, group, SD = NULL, nSD = 1,
                                  linewidth=errorbar.size, width=errorbar.width) +
           ggplot2::theme_bw() +
           ggplot2::labs(x=xlab, y=ylab, fill=group.label, color=group.label) +
-          ggplot2::scale_y_continuous(labels=ylabels,
+          ggplot2::scale_y_continuous(breaks=breaks.y, labels=labels.y, limits=ylim,
                                       expand=ggplot2::expansion(mult = expand.y),
                                       sec.axis=sec_axis0) + theme0
      if(flagtext){
@@ -360,8 +399,13 @@ make_plot <- function(data, x, y, group, SD = NULL, nSD = 1,
                 size=text.size, vjust=0.5, hjust=hjust, angle=90, color=text.color)
      }
 
-     if(!is.null(facet)){
-        pp <- pp + ggplot2::facet_wrap(~facet, scales=scales, labeller=ggplot2::label_parsed)
+     if(!is.null(facet) | !is.null(facet2)){
+        fm <- paste(ifelse(is.null(facet2),".","facet2"),"~",ifelse(is.null(facet),".","facet"))
+        if(facet.type=="wrap"){
+          pp <- pp + ggplot2::facet_wrap(as.formula(fm), scales=scales, labeller=ggplot2::label_parsed)
+        }else{
+          pp <- pp + ggplot2::facet_grid(as.formula(fm), scales=scales, labeller=ggplot2::label_parsed)
+        }
      }
 
      if(!is.null(hline)){

@@ -9,6 +9,7 @@
 ^.*\.DS_store$
 ^.*\.DS_Store$
 ^.*\.Rhistory$
+^.*\.RData$
 ^src/symbols\.rds$
 ^\.travis\.yml$
 ^README\.md$

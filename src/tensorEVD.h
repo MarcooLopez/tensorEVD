@@ -8,7 +8,8 @@
 
 SEXP get_dimnames(int nrow, int ncol,
                   int *irow1, int *irow2, int *irow,
-                  int *icol1, int *icol2, int *icol);
+                  int *icol1, int *icol2, int *icol,
+                  SEXP dimnames1_, SEXP dimnames2_);
 
 void get_pos(int nA, int nB, int k, int *i, int *j);
 

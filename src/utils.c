@@ -2,43 +2,51 @@
 
 SEXP get_dimnames(int nrow, int ncol,
                   int *irow1, int *irow2, int *irow,
-                  int *icol1, int *icol2, int *icol)
+                  int *icol1, int *icol2, int *icol,
+                  SEXP dimnames1_,  // optional dimnames from inputs
+                  SEXP dimnames2_)
 {
   SEXP rownames_ = PROTECT(Rf_allocVector(STRSXP, nrow));
   SEXP colnames_ = PROTECT(Rf_allocVector(STRSXP, ncol));
   SEXP dimnames_ = PROTECT(Rf_allocVector(VECSXP, 2));
 
-  int i;
-  char name1[100], name2[100];
+  int i, j;
+  char *name1 = (char*)malloc(100*sizeof(char));
+  char *name2 = (char*)malloc(100*sizeof(char));
 
-  // rownames
-  if(irow == NULL){
-    for(i=0; i<nrow; i++){
-      snprintf(name1, 100, "%d", irow1[i]+1);
-      snprintf(name2, 100, "%d", irow2[i]+1);
-      SET_STRING_ELT(rownames_,i,mkChar(strcat(strcat(name1, ":"), name2)));
+  int flag1 = !Rf_isNull(dimnames1_) && (Rf_length(dimnames1_)==2);
+  int flag2 = !Rf_isNull(dimnames2_) && (Rf_length(dimnames2_)==2);
+
+  //Rprintf(" Making rownames ...\n");
+  for(i=0; i<nrow; i++){
+    j = (irow == NULL) ? i : irow[i];
+    if(flag1 && (Rf_length(VECTOR_ELT(dimnames1_,0))>0)){
+      strcpy(name1, CHAR(STRING_ELT(VECTOR_ELT(dimnames1_,0),irow1[j])));
+    }else{
+      snprintf(name1, 100, "%d", irow1[j]+1);
     }
-  }else{
-    for(i=0; i<nrow; i++){
-      snprintf(name1, 100, "%d", irow1[irow[i]]+1);
-      snprintf(name2, 100, "%d", irow2[irow[i]]+1);
-      SET_STRING_ELT(rownames_,i,mkChar(strcat(strcat(name1, ":"), name2)));
+    if(flag2 && (Rf_length(VECTOR_ELT(dimnames2_,0))>0)){
+      strcpy(name2, CHAR(STRING_ELT(VECTOR_ELT(dimnames2_,0),irow2[j])));
+    }else{
+      snprintf(name2, 100, "%d", irow2[j]+1);
     }
+    SET_STRING_ELT(rownames_,i,mkChar(strcat(strcat(name1, ":"), name2)));
   }
 
-  // colnames
-  if(irow == NULL){
-    for(i=0; i<ncol; i++){
-      snprintf(name1, 100, "%d", icol1[i]+1);
-      snprintf(name2, 100, "%d", icol2[i]+1);
-      SET_STRING_ELT(colnames_,i,mkChar(strcat(strcat(name1, ":"), name2)));
+  //Rprintf(" Making colnames ...\n");
+  for(i=0; i<ncol; i++){
+    j = (icol == NULL) ? i : icol[i];
+    if(flag1 && (Rf_length(VECTOR_ELT(dimnames1_,1))>0)){
+      strcpy(name1, CHAR(STRING_ELT(VECTOR_ELT(dimnames1_,1),icol1[j])));
+    }else{
+      snprintf(name1, 100, "%d", icol1[j]+1);
     }
-  }else{
-    for(i=0; i<ncol; i++){
-      snprintf(name1, 100, "%d", icol1[icol[i]]+1);
-      snprintf(name2, 100, "%d", icol2[icol[i]]+1);
-      SET_STRING_ELT(colnames_,i,mkChar(strcat(strcat(name1, ":"), name2)));
+    if(flag2 && (Rf_length(VECTOR_ELT(dimnames2_,1))>0)){
+      strcpy(name2, CHAR(STRING_ELT(VECTOR_ELT(dimnames2_,1),icol2[j])));
+    }else{
+      snprintf(name2, 100, "%d", icol2[j]+1);
     }
+    SET_STRING_ELT(colnames_,i,mkChar(strcat(strcat(name1, ":"), name2)));
   }
 
   SET_VECTOR_ELT(dimnames_, 0, rownames_);

@@ -6,7 +6,7 @@
 Hadamard(A, B, rowsA, rowsB,
          colsA = NULL, colsB = NULL,
          make.dimnames = FALSE,
-         drop = TRUE)
+         drop = TRUE, inplace = FALSE)
 
 }
 \arguments{
@@ -14,17 +14,19 @@ Hadamard(A, B, rowsA, rowsB,
 
 \item{B}{(numeric) Right numeric matrix}
 
-\item{rowsA}{(character/integer) Vector of length \ifelse{html}{\out{<i>m</i>}}{\eqn{m}{m}} with either names or indices mapping from rows of \code{A} into the resulting hadamard product}
+\item{rowsA}{(integer/character) Vector of length \ifelse{html}{\out{<i>m</i>}}{\eqn{m}{m}} with either indices or row names mapping from rows of \code{A} into the resulting hadamard product. If 'missing', it is assumed to be equal to \code{1,...,nrow(A)}}
 
-\item{rowsB}{(character/integer) Vector of length \ifelse{html}{\out{<i>m</i>}}{\eqn{m}{m}} with names or indices mapping from rows of \code{B} into the resulting hadamard product}
+\item{rowsB}{(integer/character) Vector of length \ifelse{html}{\out{<i>m</i>}}{\eqn{m}{m}} with either indices or row names mapping from rows of \code{B} into the resulting hadamard product. If 'missing', it is assumed to be equal to \code{1,...,nrow(B)}}
 
-\item{colsA}{(character/integer) (Optional) Similar to \code{rowsA}, vector of length \ifelse{html}{\out{<i>n</i>}}{\eqn{n}{n}} for columns. If \code{colsA = NULL}, it is assumed to be equal to \code{rowsA}}
+\item{colsA}{(integer/character) (Optional) Similar to \code{rowsA}, vector of length \ifelse{html}{\out{<i>n</i>}}{\eqn{n}{n}} for columns. If \code{NULL}, it is assumed to be equal to \code{1,...,ncol(A)}}
 
-\item{colsB}{(character/integer) (Optional) Similar to \code{rowsB}, vector of length \ifelse{html}{\out{<i>n</i>}}{\eqn{n}{n}} for columns. If \code{colsB = NULL}, it is assumed to be equal to \code{rowsB}}
+\item{colsB}{(integer/character) (Optional) Similar to \code{rowsB}, vector of length \ifelse{html}{\out{<i>n</i>}}{\eqn{n}{n}} for columns. If \code{NULL}, it is assumed to be equal to \code{1,...,ncol(B)}}
 
 \item{drop}{Either \code{TRUE} or \code{FALSE} to whether return a uni-dimensional vector when output is a matrix with either 1 row or 1 column as per the \code{rows} and \code{cols} arguments}
 
-\item{make.dimnames}{\code{TRUE} or \code{FALSE} to whether add rownames and colnames attributes to the output}
+\item{make.dimnames}{\code{TRUE} or \code{FALSE} to whether add \code{rownames} and \code{colnames} attributes to the output}
+
+\item{inplace}{\code{TRUE} or \code{FALSE} to whether operate directly on one input matrix (\code{A} or \code{B}) when this is used as is (i.e., is not indexed; therefore, needs to be of appropiate dimensions) in the Hadamard. When \code{TRUE} the output will be overwritten on the same address occupied by the non-indexed matrix. Default \code{inplace=FALSE}}
 }
 \value{
 Returns a matrix containing the Hadamard product.
@@ -81,7 +83,7 @@ The function computes the Hadamard product directly from \ifelse{html}{\out{<b>A
   # Using 'Hadamard' function
   K2 = Hadamard(A, B, rowsA, rowsB, colsA, colsB)
   
-  max(K1-K2)  # They should be equal
+  all.equal(K1,K2)  # They should be equal
   
   # ==============================================
   # Example 2. Indexing using row/column names
@@ -99,10 +101,11 @@ The function computes the Hadamard product directly from \ifelse{html}{\out{<b>A
   
   # Direct hadamard product
   K1 = A[IDA,IDA]*B[IDB,IDB]
+  dimnames(K1) = list(paste0(IDA,":",IDB), paste0(IDA,":",IDB))
   
   # Using 'Hadamard' function
-  K2 = Hadamard(A, B, IDA, IDB)
+  K2 = Hadamard(A, B, IDA, IDB, make.dimnames=TRUE)
   
-  max(K1-K2)  # They should be equal
+  all.equal(K1,K2)  # They should be equal
 
 }

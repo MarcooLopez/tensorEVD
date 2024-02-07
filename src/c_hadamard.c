@@ -2,16 +2,15 @@
 
 //==============================================================
 //==============================================================
-
 SEXP R_hadamard(SEXP nrowA_, SEXP ncolA_, SEXP A_,
                 SEXP nrowB_, SEXP ncolB_, SEXP B_,
                 SEXP nrow_, SEXP ncol_, SEXP out_,
                 SEXP irowA_, SEXP icolA_,
                 SEXP irowB_, SEXP icolB_,
                 SEXP drop_, SEXP kronecker_,
-                SEXP makedimnames_)
+                SEXP makedimnames_, SEXP inplace_)
 {
-    int nprotect = 5;
+    int nprotect = 4;
 
     int nrow=INTEGER_VALUE(nrow_);
     int ncol=INTEGER_VALUE(ncol_);
@@ -22,6 +21,7 @@ SEXP R_hadamard(SEXP nrowA_, SEXP ncolA_, SEXP A_,
     int drop=asLogical(drop_);
     int kronecker=asLogical(kronecker_);
     int makedimnames=asLogical(makedimnames_);
+    int inplace=INTEGER_VALUE(inplace_);
 
     PROTECT(A_ = AS_NUMERIC(A_));
     double *A = NUMERIC_POINTER(A_);
@@ -81,31 +81,49 @@ SEXP R_hadamard(SEXP nrowA_, SEXP ncolA_, SEXP A_,
 
     }
 
-    // Rprintf(" Making the Hadamard product ...");
+    // Rprintf(" Allocating memory for Hadamard product ...\n");
     SEXP out2_;
     int ismatrix = 1;
-    if((nrow==1) || (ncol==1))
-    {
-      if(drop){
-        out2_ = PROTECT(Rf_allocVector(REALSXP, (long long)nrow*ncol));
-        ismatrix = 0;
+    double *out2;
+    if(inplace == 0){
+      if((nrow==1) || (ncol==1))
+      {
+        if(drop){
+          out2_ = PROTECT(Rf_allocVector(REALSXP, (long long)nrow*ncol));
+          ismatrix = 0;
+        }else{
+          out2_ = PROTECT(Rf_allocMatrix(REALSXP, nrow, ncol));
+        }
       }else{
         out2_ = PROTECT(Rf_allocMatrix(REALSXP, nrow, ncol));
       }
-    }else{
-      out2_ = PROTECT(Rf_allocMatrix(REALSXP, nrow, ncol));
-    }
-    double *out2 = NUMERIC_POINTER(out2_);
+      out2 = NUMERIC_POINTER(out2_);
+      nprotect++;
 
+    }else{
+      //out2_ = R_NilValue;
+      if(inplace == 1){
+        out2 = A;
+        out2_ = A_;
+      }else{ // inplace==2
+        out2 = B;
+        out2_ = B_;
+      }
+    }
+
+    //Rprintf(" Making the Hadamard product ...\n");
     double a = 1.0;
     size_t j;
     for(j=0; j<ncol; j++){
       hadam_set(nrow, &a, A + (long long)nrowA*icolA[j], irowA, B + (long long)nrowB*icolB[j], irowB, out2 + nrow*j);
     }
 
-    // Rprintf(" Making dimnames ...");
-    if(ismatrix && makedimnames){
-      setAttrib(out2_, R_DimNamesSymbol, get_dimnames(nrow,ncol,irowA,icolA,irowB,icolB,NULL,NULL));
+    //Rprintf(" Making dimnames ...\n");
+    if(ismatrix && makedimnames && (inplace==0)){
+      setAttrib(out2_, R_DimNamesSymbol,
+                get_dimnames(nrow,ncol,irowA,irowB,NULL,icolA,icolB,NULL,
+                             getAttrib(A_, R_DimNamesSymbol),
+                             getAttrib(B_, R_DimNamesSymbol)));
     }
 
     UNPROTECT(nprotect);

@@ -4,7 +4,7 @@
 \title{Tensor EVD}
 \usage{
 tensorEVD(K1, K2, ID1, ID2, alpha = 1.0,
-          V1 = NULL, d1 = NULL, V2 = NULL, d2 = NULL,
+          EVD1 = NULL, EVD2 = NULL,
           d.min = .Machine$double.eps, 
           make.dimnames = FALSE, verbose = FALSE)
 }
@@ -17,13 +17,13 @@ tensorEVD(K1, K2, ID1, ID2, alpha = 1.0,
 
 \item{alpha}{(numeric) Proportion of variance of the tensor product to be explained by the tensor eigenvectors}
 
-\item{V1, d1}{(numeric) (Optional) Eigenvectors and eigenvalues of \code{K1}}
+\item{EVD1}{(list) (Optional) Eigenvectors and eigenvalues of \code{K1} as produced by the \code{eigen} function}
 
-\item{V2, d2}{(numeric) (Optional) Eigenvectors and eigenvalues of \code{K2}}
+\item{EVD2}{(list) (Optional) Eigenvectors and eigenvalues of \code{K2} as produced by the \code{eigen} function}
 
 \item{d.min}{(numeric) Tensor eigenvalue threshold. Default is a numeric zero. Only eigenvectors with eigenvalue passing this threshold are returned}
 
-\item{make.dimnames}{\code{TRUE} or \code{FALSE} to whether add rownames and colnames attributes to the output}
+\item{make.dimnames}{\code{TRUE} or \code{FALSE} to whether add \code{rownames} and \code{colnames} attributes to the output}
 
 \item{verbose}{\code{TRUE} or \code{FALSE} to whether show progress}
 }
@@ -105,8 +105,8 @@ Each tensor eigenvector \ifelse{html}{\out{<i>k</i>}}{\eqn{k}{k}} is derived sep
   EVD = tensorEVD(K1, K2, ID1, ID2)
 
   # Eigenvectors and eigenvalues are numerically equal
-  max(abs(EVD$values-EVD0$values))
-  max(abs(EVD$vectors)-abs(EVD0$vectors))
+  all.equal(EVD0$values, EVD$values)
+  all.equal(abs(EVD0$vectors), abs(EVD$vectors)) 
 
   # If a proportion of variance explained is specified, 
   # only the eigenvectors needed to explain such proportion are derived
@@ -117,8 +117,7 @@ Each tensor eigenvector \ifelse{html}{\out{<i>k</i>}}{\eqn{k}{k}} is derived sep
   # For the direct EVD
   varexp = cumsum(EVD0$values/sum(EVD0$values))
   index = 1:which.min(abs(varexp-alpha))
-  V = EVD0$vectors[,index]
-  dim(V)
+  dim(EVD0$vectors[,index])
 
   # ==============================================
   # Example 2. Incomplete design (Hadamard product)
@@ -132,8 +131,8 @@ Each tensor eigenvector \ifelse{html}{\out{<i>k</i>}}{\eqn{k}{k}} is derived sep
   EVD0 = eigen(K)
   EVD = tensorEVD(K1, K2, ID1, ID2)
 
-  max(abs(EVD$values-EVD0$values))
-  max(abs(EVD$vectors)-abs(EVD0$vectors))
+  all.equal(EVD0$values, EVD$values)
+  all.equal(abs(EVD0$vectors), abs(EVD$vectors)) 
   
   # However, the sum of the eigenvalues is equal to the trace(K)
   c(sum(EVD0$values), sum(EVD$values), sum(diag(K)))
@@ -141,7 +140,7 @@ Each tensor eigenvector \ifelse{html}{\out{<i>k</i>}}{\eqn{k}{k}} is derived sep
   # And provide the same approximation for K
   K01 = EVD0$vectors\%*\%diag(EVD0$values)\%*\%t(EVD0$vectors)
   K02 = EVD$vectors\%*\%diag(EVD$values)\%*\%t(EVD$vectors)
-  c(max(K-K01), max(K-K02))
+  c(all.equal(K,K01), all.equal(K,K02))
 
   # When n is different from N=n1xn2, both methods provide different 
   # number or eigenvectors/eigenvalues. The eigen function provides 
@@ -154,10 +153,10 @@ Each tensor eigenvector \ifelse{html}{\out{<i>k</i>}}{\eqn{k}{k}} is derived sep
   ID2 = sample(seq(n2), n, replace=TRUE)
 
   K = K1[ID1,ID1]*K2[ID2,ID2]
-  EVD = eigen(K)
-  EVD0 = tensorEVD(K1, K2, ID1, ID2)
+  EVD0 = eigen(K)
+  EVD = tensorEVD(K1, K2, ID1, ID2)
 
-  c(ncol(EVD$vectors), ncol(EVD0$vectors))
+  c(eigen=sum(EVD0$values>1E-10), tensorEVD=sum(EVD$values>1E-10))
 
   # Sample size n being twice n1 x n2
   n = n1*n2*2
@@ -165,10 +164,10 @@ Each tensor eigenvector \ifelse{html}{\out{<i>k</i>}}{\eqn{k}{k}} is derived sep
   ID2 = sample(seq(n2), n, replace=TRUE)
 
   K = K1[ID1,ID1]*K2[ID2,ID2]
-  EVD = eigen(K)
-  EVD0 = tensorEVD(K1, K2, ID1, ID2)
+  EVD0 = eigen(K)
+  EVD = tensorEVD(K1, K2, ID1, ID2)
 
-  c(ncol(EVD$vectors), ncol(EVD0$vectors))
+  c(eigen=sum(EVD0$values>1E-10), tensorEVD=sum(EVD$values>1E-10))
   
 }
 
