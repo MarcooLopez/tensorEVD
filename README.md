@@ -1,5 +1,10 @@
 # Fast Factorization of High-Dimensional Tensor Product Matrices
 
+[![CRAN status](https://www.r-pkg.org/badges/version/tensorEVD?color=green)](https://CRAN.R-project.org/package=tensorEVD)
+[![CRAN checks](https://badges.cranchecks.info/worst/tensorEVD.svg)](https://cran.r-project.org/web/checks/check_results_tensorEVD.html)
+[![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/tensorEVD)](http://www.r-pkg.org/pkg/tensorEVD)
+[![Downloads/month](http://cranlogs.r-pkg.org/badges/tensorEVD?color=blue)](http://www.r-pkg.org/pkg/tensorEVD)
+
 The 'tensorEVD' R-package offers tools for calculation and factorization of high-dimensional tensor products (Hadamard and Kronecker) that are formed by smaller matrices.
 
 *Last update: Feb 07, 2024*
