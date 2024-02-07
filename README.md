@@ -1,29 +1,31 @@
 # Fast Factorization of High-Dimensional Tensor Product Matrices
 
-[![CRAN status](https://www.r-pkg.org/badges/version/tensorEVD?color=green)](https://CRAN.R-project.org/package=tensorEVD)
-[![CRAN checks](https://badges.cranchecks.info/worst/tensorEVD.svg)](https://cran.r-project.org/web/checks/check_results_tensorEVD.html)
-[![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/tensorEVD)](http://www.r-pkg.org/pkg/tensorEVD)
-[![Downloads/month](http://cranlogs.r-pkg.org/badges/tensorEVD?color=blue)](http://www.r-pkg.org/pkg/tensorEVD)
-
 The 'tensorEVD' R-package offers tools for calculation and factorization of high-dimensional tensor products (Hadamard and Kronecker) that are formed by smaller matrices.
 
-*Last update: Nov 13, 2023*
+*Last update: Feb 07, 2024*
 
-## Installation and loading
-Installation of 'tensorEVD' package requires a R-version greater than 3.5.0. The 'tensorEVD' package can be installed from GitHub, no CRAN version is available yet.
+## Installation
+Installation of 'tensorEVD' package requires an R-version &ge; 3.6.0. 
 
-Installation from GitHub (developing version)
+From CRAN (stable version)
 ```r
-install.packages('remotes',repos='https://cran.r-project.org/')  # 1. install remotes
-library(remotes)                                                 # 2. load the library
-install_github('MarcooLopez/tensorEVD')                          # 3. install tensorEVD from GitHub
-library(tensorEVD)                                               # 4. load tensorEVD
+install.packages('tensorEVD', repos='https://cran.r-project.org/')  
+library(tensorEVD)                                                  
+```
+
+From GitHub (developing version)
+```r
+if(!'remotes' %in% rownames(installed.packages())){
+  install.packages('remotes', repos='https://cran.r-project.org/')  
+}
+remotes::install_github('MarcooLopez/tensorEVD')                    
+library(tensorEVD)                                                
 ```
 
 ## Documentation
-Description of the package's main function.
+Description of the package's main functions.
 ```r
-help(tensorEVD)  
+help(package='tensorEVD', help_type='html')
 ```
 
 ## Examples
@@ -31,12 +33,12 @@ Here we present examples on the use of the functions included in the package.
 
 * [Kronecker product](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/master/inst/doc/kronecker.html)
 * [Hadamard product](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/master/inst/doc/hadamard.html)
-* [Tensor EVD](https://github.com/MarcooLopez/tensorEVD/blob/main/inst/md/tensorEVD.md)
+* [Tensor EVD](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/master/inst/doc/tensorEVD.html)
 
-## Extra documentation
+## Application
 We provide benchmarks and an application in Genomic Prediction of the *tensorEVD*() function using data from the Genomes-to-Field (G2F) Initiative
 
-* [Documentation](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/master/inst/doc/tensorEVD-documentation.html)
+* Lopez-Cruz *et al.*, 2024. *G3:Genes|Genomes|Genetics* [[Manuscript](https://academic.oup.com/g3journal/advance-article/doi/10.1093/g3journal/jkae001/7511334)] [[Documentation](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/master/inst/doc/tensorEVD-documentation.html)]
 
 ## Citation
-*A manuscript is under review*
+Lopez-Cruz M, Pérez-Rodríguez Paulino, and de los Campos G. **2024**. A fast algorithm to factorize high-dimensional Tensor Product matrices used in Genetic Models. *G3 Genes|Genomes|Genetics*. jkae001. doi: 10.1093/g3journal/jkae001
