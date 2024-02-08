@@ -1583,13 +1583,11 @@ tcrossprod(a, b)</code></pre>
 ## [3,]   12   15</code></pre>
 </div>
 </div>
-<div id="comparison-with-other-functions" class="section level3">
-<h3>Comparison with other functions</h3>
+<div id="performance" class="section level3">
+<h3>Performance</h3>
 <p>Here we compare tensorEVD’s <code>Kronecker()</code> function with
-the <code>kronecker()</code> function from the ‘base’ R-package and with
-the <code>kronecker.prod()</code> function from the ‘fastmatrix’
-R-package, in the computation of a Kronecker product of two general
-matrices <span class="math inline">\(\textbf{A}\)</span> and <span class="math inline">\(\textbf{B}\)</span>.</p>
+the <code>kronecker()</code> function from the ‘base’ R-package in the
+computation of a Kronecker product of two general matrices <span class="math inline">\(\textbf{A}\)</span> and <span class="math inline">\(\textbf{B}\)</span>.</p>
 <pre class="r"><code># Simulating matrices A and B
 m = 20; n = 20
 p = 40; q = 30
@@ -1598,17 +1596,18 @@ B &lt;- matrix(rnorm(p*q), ncol=q)
 
 # Making the Kronecker product
 K1 &lt;- kronecker(A, B)                    
-K2 &lt;- fastmatrix::kronecker.prod(A, B)   
-K3 &lt;- Kronecker(A, B)                   
+K2 &lt;- Kronecker(A, B)                   
 
-# All should be equal
-c(all.equal(K1,K2), all.equal(K2,K3))</code></pre>
-<pre><code>## [1] TRUE TRUE</code></pre>
+# Should be equal
+all.equal(K1,K2)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
 <div id="benchmark" class="section level4">
 <h4>Benchmark</h4>
 <p>Here we compare these methods in terms of computational speed in
-scenarios with small and large matrices. The following benchmark was
-performed using the code provided in this <a href="https://raw.githubusercontent.com/MarcooLopez/tensorEVD/main/misc/code_doc/kronecker_bm1.R">script</a>
+scenarios with small and large matrices. We included in the benchmark
+the <code>kronecker.prod()</code> function from the ‘fastmatrix’
+R-package. The following benchmark was performed using the code provided
+in this <a href="https://raw.githubusercontent.com/MarcooLopez/tensorEVD/main/misc/code_doc/kronecker_bm1.R">script</a>
 run on a Linux environment based on the following system settings:</p>
 <ul>
 <li>Machine: Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GHz</li>
@@ -1680,13 +1679,13 @@ memory address than inputs:</p>
 K &lt;- Kronecker(A, B)
 c(K=pryr::address(K), A=pryr::address(A))</code></pre>
 <pre><code>##                K                A 
-## &quot;0x7f925a9e4a00&quot; &quot;0x7f925aa41000&quot;</code></pre>
+## &quot;0x7f9461710600&quot; &quot;0x7f94629b5a00&quot;</code></pre>
 <p>The parameter <code>inplace</code> can be used to overwrite the
 output at the same address as the input:</p>
 <pre class="r"><code>A &lt;- Kronecker(A, B, inplace=TRUE)
 c(A=pryr::address(A))  # output address remain unchanged</code></pre>
 <pre><code>##                A 
-## &quot;0x7f925aa41000&quot;</code></pre>
+## &quot;0x7f94629b5a00&quot;</code></pre>
 <pre class="r"><code>all.equal(K, A)        # contains the desired result</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 </div>

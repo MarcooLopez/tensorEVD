@@ -1,6 +1,5 @@
 library(microbenchmark)
 library(tensorEVD)
-library(fastmatrix)
 library(ggplot2)
 
 # 1. Simulating incompatible matrices

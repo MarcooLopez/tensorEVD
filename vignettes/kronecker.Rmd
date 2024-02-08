@@ -60,9 +60,9 @@ Kronecker(a, t(b))
 tcrossprod(a, b)
 ```
 
-### Comparison with other functions
+### Performance
 
-Here we compare tensorEVD's `Kronecker()` function with the `kronecker()` function from the 'base' R-package and with the `kronecker.prod()` function from the 'fastmatrix' R-package, in the computation of a Kronecker product of two general matrices $\textbf{A}$ and $\textbf{B}$.  
+Here we compare tensorEVD's `Kronecker()` function with the `kronecker()` function from the 'base' R-package in the computation of a Kronecker product of two general matrices $\textbf{A}$ and $\textbf{B}$.  
 
 ```{r eval=TRUE, echo=TRUE}
 # Simulating matrices A and B
@@ -73,16 +73,15 @@ B <- matrix(rnorm(p*q), ncol=q)
 
 # Making the Kronecker product
 K1 <- kronecker(A, B)                    
-K2 <- fastmatrix::kronecker.prod(A, B)   
-K3 <- Kronecker(A, B)                   
+K2 <- Kronecker(A, B)                   
 
-# All should be equal
-c(all.equal(K1,K2), all.equal(K2,K3))
+# Should be equal
+all.equal(K1,K2)
 ```
 
 #### Benchmark
 
-Here we compare these methods in terms of computational speed in scenarios with small and large matrices. The following benchmark was performed using the code provided in this [script](https://raw.githubusercontent.com/MarcooLopez/tensorEVD/main/misc/code_doc/kronecker_bm1.R) run on a Linux environment based on the following system settings:
+Here we compare these methods in terms of computational speed in scenarios with small and large matrices. We included in the benchmark the `kronecker.prod()` function from the 'fastmatrix' R-package. The following benchmark was performed using the code provided in this [script](https://raw.githubusercontent.com/MarcooLopez/tensorEVD/main/misc/code_doc/kronecker_bm1.R) run on a Linux environment based on the following system settings:
 
 - Machine: Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GHz
 - Memory: 64 GB in RAM
