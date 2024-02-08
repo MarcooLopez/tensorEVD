@@ -5,7 +5,7 @@ output:
     css: style.css
     toc: true
     toc_float: true
-vignette: |
+vignette: >
   %\VignetteIndexEntry{tensorEVD}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -176,16 +176,7 @@ ncol(EVD0$vectors[,index])
 
 #### Making dimension names
 
-Row and column names for the eigenvectors of the Hadamard product can be retrieved using the `make.dimnames` argument. Attribute `rownames` of the eigenvectors will be produced by crossing `rownames` of $\textbf{K}_1$ with those of $\textbf{K}_2$. Attribute `colnames` will contain the cross between the eigenvector position of the EVD of $\textbf{K}_1$ with those of $\textbf{K}_1$ forming each eigenvector of the Hadamard product.
-
-If inputs do not have `dimnames` attribute, the `rownames` of the eigenvectors of the Hadamard will contain integers denoting the row position. For instance,
-
-```{r eval=TRUE, echo=TRUE}
-EVD <- tensorEVD(K1, K2, ID1, ID2, make.dimnames=TRUE)
-EVD$vectors[1:6,1:5]
-```
-
-However, if inputs contain `dimnames` attribute, these are used to produce the `rownames` of the eigenvectors of the Hadamard:
+Row and column names for the eigenvectors of the Hadamard product can be retrieved using the `make.dimnames` argument. Attribute `rownames` of the eigenvectors will be produced by crossing `rownames` of $\textbf{K}_1$ with those of $\textbf{K}_2$. Attribute `colnames` will contain the cross between the eigenvector position of the EVD of $\textbf{K}_1$ with those of $\textbf{K}_1$ forming each eigenvector of the Hadamard product. For instance,
 
 ```{r eval=TRUE, echo=TRUE}
 dimnames(K1) <- list(paste0("i",seq(n1)), paste0("i",seq(n1)))

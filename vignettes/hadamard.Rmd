@@ -5,7 +5,7 @@ output:
     css: style.css
     toc: true
     toc_float: true
-vignette: |
+vignette: >
   %\VignetteIndexEntry{Hadamard}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -168,20 +168,12 @@ all.equal(K, A)        # contains the desired result
 
 #### Making dimension names
 
-Row and column names for the Hadamard product can be retrieved using the `make.dimnames` argument. Attribute `dimnames` of the Hadamard will be produced by crossing `rownames` and `colnames` of input $\textbf{A}$ with those of input $\textbf{B}$.
-
-If inputs do not have `dimnames` attribute, the `dimnames` of the Hadamard will contain integers denoting the row/column position. For instance,
+Row and column names for the Hadamard product can be retrieved using the `make.dimnames` argument. Attribute `dimnames` of the Hadamard will be produced by crossing `rownames` and `colnames` of input $\textbf{A}$ with those of input $\textbf{B}$. For instance,
 
 ```{r eval=TRUE, echo=TRUE}
 A <- matrix(1:16, ncol=4)
 B <- matrix(10*(1:16), ncol=4)
 
-Hadamard(A, B, make.dimnames=TRUE)
-```
-
-However, if inputs contain `dimnames` attribute, these are used to produce the `dimnames` of the Hadamard:
-
-```{r eval=TRUE, echo=TRUE}
 dimnames(A) <- list(paste("week",1:4), month.abb[1:4])
 dimnames(B) <- list(c("chicken","beef","pork","fish"), LETTERS[1:4])
 

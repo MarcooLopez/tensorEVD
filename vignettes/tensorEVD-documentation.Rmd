@@ -1,6 +1,5 @@
 ---
-title: "Documentation: A fast algorithm to factorize high-dimensional
-Tensor Product matrices used in Genetic Models"
+title: "Documentation: A fast algorithm to factorize high-dimensional Tensor Product matrices used in Genetic Models"
 author:
   - name: Marco Lopez-Cruz^1,$\star$^, Paulino Pérez-Rodríguez^2^, and Gustavo de los Campos^1,3,4^
     affiliation:
@@ -14,7 +13,7 @@ output:
     css: style.css
     toc: true
     toc_float: true
-vignette: |
+vignette: >
   %\VignetteIndexEntry{Documentation: A fast algorithm to factorize high-dimensional tensor product matrices}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -223,7 +222,7 @@ figure1 <- make_plot(dat0, type="line", x='n', y='ratio', group="alpha",
                      group.color=color1, nSD=0, errorbar.size=0,
                      breaks.y=breaks0, labels.y=sprintf("%.f",10^breaks0),
                      scales="fixed")
-print(figure1)
+#print(figure1)
 ```
 
 **Approximation accuracy**

@@ -14,7 +14,7 @@ Description: Here we provide tools for the computation and factorization of high
 LazyLoad: true
 Depends: R (>= 3.6.0)
 Suggests: knitr, rmarkdown, ggplot2, ggnewscale, reshape2, RColorBrewer, pryr
-VignetteBuilder: knitr
+VignetteBuilder: knitr, rmarkdown
 Encoding: UTF-8
 License: GPL-3
 NeedsCompilation: yes

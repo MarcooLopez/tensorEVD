@@ -1670,13 +1670,13 @@ B &lt;- matrix(rnorm(30), ncol=5)
 K &lt;- Hadamard(A, B)
 c(K=pryr::address(K), A=pryr::address(A))</code></pre>
 <pre><code>##                K                A 
-## &quot;0x7f838ad04c20&quot; &quot;0x7f838ad2ac90&quot;</code></pre>
+## &quot;0x7fcc50f05a80&quot; &quot;0x7fcc50e651f0&quot;</code></pre>
 <p>The parameter <code>inplace</code> can be used to store the output at
 the same address as the input:</p>
 <pre class="r"><code>A &lt;- Hadamard(A, B, inplace=TRUE)
 c(A=pryr::address(A))  # output address remain unchanged</code></pre>
 <pre><code>##                A 
-## &quot;0x7f838ad2ac90&quot;</code></pre>
+## &quot;0x7fcc50e651f0&quot;</code></pre>
 <pre class="r"><code>all.equal(K, A)        # contains the desired result </code></pre>
 <pre><code>## [1] TRUE</code></pre>
 </div>
@@ -1685,22 +1685,11 @@ c(A=pryr::address(A))  # output address remain unchanged</code></pre>
 <p>Row and column names for the Hadamard product can be retrieved using
 the <code>make.dimnames</code> argument. Attribute <code>dimnames</code>
 of the Hadamard will be produced by crossing <code>rownames</code> and
-<code>colnames</code> of input <span class="math inline">\(\textbf{A}\)</span> with those of input <span class="math inline">\(\textbf{B}\)</span>.</p>
-<p>If inputs do not have <code>dimnames</code> attribute, the
-<code>dimnames</code> of the Hadamard will contain integers denoting the
-row/column position. For instance,</p>
+<code>colnames</code> of input <span class="math inline">\(\textbf{A}\)</span> with those of input <span class="math inline">\(\textbf{B}\)</span>. For instance,</p>
 <pre class="r"><code>A &lt;- matrix(1:16, ncol=4)
 B &lt;- matrix(10*(1:16), ncol=4)
 
-Hadamard(A, B, make.dimnames=TRUE)</code></pre>
-<pre><code>##     1:1 2:2  3:3  4:4
-## 1:1  10 250  810 1690
-## 2:2  40 360 1000 1960
-## 3:3  90 490 1210 2250
-## 4:4 160 640 1440 2560</code></pre>
-<p>However, if inputs contain <code>dimnames</code> attribute, these are
-used to produce the <code>dimnames</code> of the Hadamard:</p>
-<pre class="r"><code>dimnames(A) &lt;- list(paste(&quot;week&quot;,1:4), month.abb[1:4])
+dimnames(A) &lt;- list(paste(&quot;week&quot;,1:4), month.abb[1:4])
 dimnames(B) &lt;- list(c(&quot;chicken&quot;,&quot;beef&quot;,&quot;pork&quot;,&quot;fish&quot;), LETTERS[1:4])
 
 Hadamard(A, B, make.dimnames=TRUE)</code></pre>

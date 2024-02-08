@@ -5,7 +5,7 @@ output:
     css: style.css
     toc: true
     toc_float: true
-vignette: |
+vignette: >
   %\VignetteIndexEntry{Kronecker}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -151,20 +151,12 @@ all.equal(K, A)        # contains the desired result
 
 #### Making dimension names
 
-Row and column names for the Kronecker product can be retrieved using the `make.dimnames` argument. Attribute `dimnames` of the Kronecker will be produced by crossing `rownames` and `colnames` of input $\textbf{A}$ with those of input $\textbf{B}$.
-
-If inputs do not have `dimnames` attribute, the `dimnames` of the Kronecker will contain integers denoting the row/column position. For instance,
+Row and column names for the Kronecker product can be retrieved using the `make.dimnames` argument. Attribute `dimnames` of the Kronecker will be produced by crossing `rownames` and `colnames` of input $\textbf{A}$ with those of input $\textbf{B}$. For instance,
 
 ```{r eval=TRUE, echo=TRUE}
 A <- matrix(1:9, ncol=3)
 B <- matrix(10*(1:4), ncol=2)
 
-Kronecker(A, B, make.dimnames=TRUE)
-```
-
-However, if inputs contain `dimnames` attribute, these are used to produce the `dimnames` of the Kronecker:
-
-```{r eval=TRUE, echo=TRUE}
 dimnames(A) <- list(paste("week",1:3), month.abb[1:3])
 dimnames(B) <- list(c("office","home"), LETTERS[1:2])
 

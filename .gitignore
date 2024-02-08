@@ -10,3 +10,6 @@ src/*.dll
 .DS_store
 ^.*\.DS_Store$
 ^.*\.Rhistory$
+/doc/
+/Meta/
+/build/
