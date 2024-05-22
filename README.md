@@ -38,9 +38,9 @@ help(package='tensorEVD', help_type='html')
 ## Examples
 Here we present examples on the use of the functions included in the package.
 
-* [Kronecker product](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/master/inst/doc/kronecker.html)
-* [Hadamard product](https://rawcdn.githack.com/MarcooLopez/tensorEVD/f9fe5a8d03c78f54f1f07febb95b04ce0e89b303/inst/Rmd/hadamard.html)
-* [Tensor EVD](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/master/inst/doc/tensorEVD.html)
+* [Hadamard product](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/main/inst/Rmd/hadamard.html)
+* [Kronecker product](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/main/inst/Rmd/kronecker.html)
+* [Tensor EVD](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/main/inst/Rmd/tensorEVD.html)
 
 ## Application
 We provide benchmarks and an application in Genomic Prediction of the *tensorEVD*() function using data from the Genomes-to-Field (G2F) Initiative
