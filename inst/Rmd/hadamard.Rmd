@@ -2,9 +2,9 @@
 title: "Hadamard product"
 output:
   html_document:
+    css: style.css
     toc: true
-    toc_float: 
-      collapsed: no
+    toc_float: false
 ---
 
 ```{r initialsetup, include=FALSE}
