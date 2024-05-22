@@ -48,4 +48,4 @@ We provide benchmarks and an application in Genomic Prediction of the *tensorEVD
 * Lopez-Cruz *et al.*, 2024. *G3:Genes|Genomes|Genetics* [[Manuscript](https://academic.oup.com/g3journal/advance-article/doi/10.1093/g3journal/jkae001/7511334)] [[Documentation](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/master/inst/doc/tensorEVD-documentation.html)]
 
 ## Citation
-Lopez-Cruz M, Pérez-Rodríguez Paulino, and de los Campos G. **2024**. A fast algorithm to factorize high-dimensional Tensor Product matrices used in Genetic Models. *G3 Genes|Genomes|Genetics*. jkae001. doi: 10.1093/g3journal/jkae001
+Lopez-Cruz M, Pérez-Rodríguez Paulino, and de los Campos G. **2024**. A fast algorithm to factorize high-dimensional Tensor Product matrices used in Genetic Models. *G3 Genes|Genomes|Genetics* 14(3): 1-8. doi: 10.1093/g3journal/jkae001
