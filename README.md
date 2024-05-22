@@ -39,7 +39,7 @@ help(package='tensorEVD', help_type='html')
 Here we present examples on the use of the functions included in the package.
 
 * [Kronecker product](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/master/inst/doc/kronecker.html)
-* [Hadamard product](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/master/inst/doc/hadamard.html)
+* [Hadamard product](https://rawcdn.githack.com/MarcooLopez/tensorEVD/f9fe5a8d03c78f54f1f07febb95b04ce0e89b303/inst/Rmd/hadamard.html)
 * [Tensor EVD](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/master/inst/doc/tensorEVD.html)
 
 ## Application
