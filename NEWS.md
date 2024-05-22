@@ -1,7 +1,13 @@
+### Version 0.1.2 (2024-05-22)
+
+- Change of names of arguments in 'Hadamard' function: rowsA -> IDrowA, colsA -> IDcolA, rowsB -> IDrowB, colsB -> IDcolB 
+- New function added: 'Hadamard_cov' to penalize a multi-variate covariance matrix. See help(Hadamard_cov)
+
+
 ### Version 0.1.1 (2024-02-07)
 
 - Warnings and notes from CRAN checks addressed
-- Precalculated EVD can be passed to the 'tensorEVD' function as a list type object as per the 'eigen' function
+- Pre-calculated EVD can be passed to the 'tensorEVD' function as a list type object as per the 'eigen' function
 - Manuscript published: Lopez-Cruz et al., 2024 (doi:10.1093/g3journal/jkae001)
 
 

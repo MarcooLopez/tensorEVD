@@ -4,11 +4,7 @@ output:
   html_document:
     css: style.css
     toc: true
-    toc_float: true
-vignette: >
-  %\VignetteIndexEntry{tensorEVD}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+    toc_float: false
 ---
 
 ```{r initialsetup, include=FALSE}
@@ -24,7 +20,7 @@ $$
 \textbf{K} = (\textbf{Z}_1 \textbf{K}_1 \textbf{Z}'_1) \odot (\textbf{Z}_2 \textbf{K}_2 \textbf{Z}'_2)
 $$
 
-where $\textbf{Z}_1$ and $\textbf{Z}_2$ are incidence matrices for $\textbf{K}_1$ and $\textbf{K}_2$, respectively.
+where $\textbf{Z}_1$ and $\textbf{Z}_2$ are incidence matrices mapping from rows (and columns) of the resulting Hadamard $\textbf{K}$ to rows (and columns) of $\textbf{K}_1$ and $\textbf{K}_2$, respectively.
 
 Let the eigenvalue decomposition (EVD) of $\textbf{K}_1$ and $\textbf{K}_2$ to be
 $\textbf{K}_1 = \textbf{V}_1 \textbf{D}_1 \textbf{V}'_1$ and 
@@ -63,7 +59,7 @@ $$
 \tilde{\boldsymbol{v}}_k = (\textbf{Z}_1 \boldsymbol{v}_{1i_k}) \odot (\textbf{Z}_2 \boldsymbol{v}_{2j_k})
 $$
 
-The terms $\textbf{Z}_1 \boldsymbol{v}_{1i_k}$ and $\textbf{Z}_2 \boldsymbol{v}_{2j_k}$ can be obtained by matrix indexing using integer vectors `ID1` and `ID2` of length $n$, for instance, as `v1ik[ID1]` and `v2jk[ID2]`. Therefore, the `tensorEVD()` can be implemented using as inputs the covariance structure matrices and IDs, e.g., 
+The terms $\textbf{Z}_1 \boldsymbol{v}_{1i_k}$ and $\textbf{Z}_2 \boldsymbol{v}_{2j_k}$ can be obtained by matrix indexing using integer vectors `ID1` and `ID2` of length $n$, for instance, as `v1ik[ID1]` and `v2jk[ID2]`. The entries of `ID1` and `ID2` are the row (and column) number of $\textbf{K}_1$ and $\textbf{K}_2$ that are mapped at each row of $\textbf{Z}_1$ and $\textbf{Z}_2$, respectively. Therefore, the `tensorEVD()` can be implemented using as inputs the covariance structure matrices and IDs, e.g., 
 
 ```{r eval=FALSE, echo=TRUE}
 tensorEVD(K1, K2, ID1, ID2)

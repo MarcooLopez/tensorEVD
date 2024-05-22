@@ -3,8 +3,8 @@
 \alias{Hadamard}
 \title{Hadamard product}
 \usage{
-Hadamard(A, B, rowsA, rowsB,
-         colsA = NULL, colsB = NULL,
+Hadamard(A, B, IDrowA, IDrowB,
+         IDcolA = NULL, IDcolB = NULL,
          make.dimnames = FALSE,
          drop = TRUE, inplace = FALSE)
 
@@ -14,13 +14,15 @@ Hadamard(A, B, rowsA, rowsB,
 
 \item{B}{(numeric) Right numeric matrix}
 
-\item{rowsA}{(integer/character) Vector of length \ifelse{html}{\out{<i>m</i>}}{\eqn{m}{m}} with either indices or row names mapping from rows of \code{A} into the resulting hadamard product. If 'missing', it is assumed to be equal to \code{1,...,nrow(A)}}
+\item{IDrowA}{(integer/character) Vector of length \ifelse{html}{\out{<i>m</i>}}{\eqn{m}{m}} with either indices or row names mapping from rows of \code{A} into the resulting hadamard product. If 'missing', it is assumed to be equal to \code{1,...,nrow(A)}}
 
-\item{rowsB}{(integer/character) Vector of length \ifelse{html}{\out{<i>m</i>}}{\eqn{m}{m}} with either indices or row names mapping from rows of \code{B} into the resulting hadamard product. If 'missing', it is assumed to be equal to \code{1,...,nrow(B)}}
+\item{IDrowB}{(integer/character) Vector of length \ifelse{html}{\out{<i>m</i>}}{\eqn{m}{m}} with either indices or row names mapping from rows of \code{B} into the resulting hadamard product. If 'missing', it is assumed to be equal to \code{1,...,nrow(B)}}
 
-\item{colsA}{(integer/character) (Optional) Similar to \code{rowsA}, vector of length \ifelse{html}{\out{<i>n</i>}}{\eqn{n}{n}} for columns. If \code{NULL}, it is assumed to be equal to \code{1,...,ncol(A)}}
+\item{IDcolA}{(integer/character) (Optional) Similar to \code{IDrowA}, vector of length \ifelse{html}{\out{<i>n</i>}}{\eqn{n}{n}} for columns. If \code{NULL}, it is assumed to be equal to \code{IDrowA} if 
+\ifelse{html}{\out{<i>m=n</i>}}{\eqn{m=n}{m=n}}}
 
-\item{colsB}{(integer/character) (Optional) Similar to \code{rowsB}, vector of length \ifelse{html}{\out{<i>n</i>}}{\eqn{n}{n}} for columns. If \code{NULL}, it is assumed to be equal to \code{1,...,ncol(B)}}
+\item{IDcolB}{(integer/character) (Optional) Similar to \code{IDrowB}, vector of length \ifelse{html}{\out{<i>n</i>}}{\eqn{n}{n}} for columns. If \code{NULL}, it is assumed to be equal to \code{IDrowB} if
+\ifelse{html}{\out{<i>m=n</i>}}{\eqn{m=n}{m=n}}}
 
 \item{drop}{Either \code{TRUE} or \code{FALSE} to whether return a uni-dimensional vector when output is a matrix with either 1 row or 1 column as per the \code{rows} and \code{cols} arguments}
 
@@ -36,25 +38,33 @@ Computes the Hadamard product between two matrices
 }
 \details{
 Computes the \ifelse{html}{\out{<i>m</i> &times; <i>n</i>}}{\eqn{m\times n}{m x n}} Hadamard product (aka element-wise or entry-wise product) matrix between matrices 
-\ifelse{html}{\out{<b>A</b><sub>0</sub> = <b>R</b><sub>1</sub> <b>A</b> <b>C'</b><sub>1</sub>}}{\eqn{\textbf{A}_{0}=\textbf{R}_{1}\textbf{A}\textbf{C}'_{1}}{A0 = R1 A C1'}} and
-\ifelse{html}{\out{<b>B</b><sub>0</sub> = <b>R</b><sub>2</sub> <b>B</b> <b>C'</b><sub>2</sub>}}{\eqn{\textbf{B}_{0}=\textbf{R}_{2}\textbf{B}\textbf{C}'_{2}}{B0 = R2 B C2'}},
+\ifelse{html}{\out{<b>A</b>}}{\eqn{\textbf{A}}{A}} and \ifelse{html}{\out{<b>B</b>}}{\eqn{\textbf{B}}{B}},
 
 \ifelse{html}{\out{<p style='text-align:center'>(<b>R</b><sub>1</sub> <b>A</b> <b>C'</b><sub>1</sub>) &odot; (<b>R</b><sub>2</sub> <b>B</b> <b>C'</b><sub>2</sub>)</p>}}{\deqn{(\textbf{R}_{1}\textbf{A}\textbf{C}'_{1})\odot(\textbf{R}_{2}\textbf{B}\textbf{C}'_{2})}{Hadamard(R1 A C1', R2 B C2')}}
 
 where
 \ifelse{html}{\out{<b>R</b><sub>1</sub>}}{\eqn{\textbf{R}_{1}}{R1}} and
-\ifelse{html}{\out{<b>R</b><sub>2</sub>}}{\eqn{\textbf{R}_{2}}{R2}} are incidence matrices for rows that can be formed by integer vectors
-\code{rowsA} and \code{rowsB} of length \ifelse{html}{\out{<i>m</i>}}{\eqn{m}{m}}, respectively, and 
+\ifelse{html}{\out{<b>R</b><sub>2</sub>}}{\eqn{\textbf{R}_{2}}{R2}} are incidence matrices mapping from rows of the resulting Hadamard to rows of \ifelse{html}{\out{<b>A</b>}}{\eqn{\textbf{A}}{A}} and \ifelse{html}{\out{<b>B</b>}}{\eqn{\textbf{B}}{B}}, respectively; and 
 \ifelse{html}{\out{<b>C</b><sub>1</sub>}}{\eqn{\textbf{C}_{1}}{C1}} and
-\ifelse{html}{\out{<b>C</b><sub>2</sub>}}{\eqn{\textbf{C}_{2}}{C2}} are incidence matrices for columns that can be formed by integer vectors
-\code{colsA} and \code{colsB} of length \ifelse{html}{\out{<i>n</i>}}{\eqn{n}{n}}, respectively.
+\ifelse{html}{\out{<b>C</b><sub>2</sub>}}{\eqn{\textbf{C}_{2}}{C2}} are incidence matrices mapping from columns of the resulting Hadamard to columns of \ifelse{html}{\out{<b>A</b>}}{\eqn{\textbf{A}}{A}} and \ifelse{html}{\out{<b>B</b>}}{\eqn{\textbf{B}}{B}}, respectively.
 
-Matrices \ifelse{html}{\out{<b>A</b><sub>0</sub>}}{\eqn{\textbf{A}_{0}}{A0}} and 
-\ifelse{html}{\out{<b>B</b><sub>0</sub>}}{\eqn{\textbf{B}_{0}}{B0}} can be obtained by matrix indexing as \code{A[rowsA,colsA]} and \code{B[rowsB,colsB]}, respectively. Therefore, the Hadamard product can be obtained directly as
+Matrix \ifelse{html}{\out{<b>R</b><sub>1</sub> <b>A</b> <b>C'</b><sub>1</sub>}}{\eqn{\textbf{R}_{1}\textbf{A}\textbf{C}'_{1}}{R1 A C1'}}
+can be obtained by matrix indexing as \code{A[IDrowA,IDcolA]}, where \code{IDrowA} and \code{IDcolA} are integer vectors whose entries are, respectively, the row and column number of 
+\ifelse{html}{\out{<b>A</b>}}{\eqn{\textbf{A}}{A}} that are mapped at each row of 
+\ifelse{html}{\out{<b>R</b><sub>1</sub>}}{\eqn{\textbf{R}_{1}}{R1}} and 
+\ifelse{html}{\out{<b>C</b><sub>1</sub>}}{\eqn{\textbf{C}_{1}}{C1}}, respectively.
+Likewise, matrix 
+\ifelse{html}{\out{<b>R</b><sub>2</sub> <b>B</b> <b>C'</b><sub>2</sub>}}{\eqn{\textbf{R}_{2}\textbf{B}\textbf{C}'_{2}}{R2 B C2'}}
+can be obtained as \code{B[IDrowB,IDcolB]}, where \code{IDrowB} and \code{IDcolB} are integer vectors whose entries are, respectively, the row and column number of 
+\ifelse{html}{\out{<b>B</b>}}{\eqn{\textbf{B}}{B}} that are mapped at each row of 
+\ifelse{html}{\out{<b>R</b><sub>2</sub>}}{\eqn{\textbf{R}_{2}}{R2}} and 
+\ifelse{html}{\out{<b>C</b><sub>2</sub>}}{\eqn{\textbf{C}_{2}}{C2}}, respectively. Therefore, the Hadamard product can be obtained directly as
 
-\ifelse{html}{\out{<p style='text-align:center;font-family:courier'>A[rowsA,colsA]*B[rowsB,colsB]</p>}}{\deqn{\code{A[rowsA,colsA]*B[rowsB,colsB]}}{A[rowsA,colsA]*B[rowsB,colsB]}}
+\ifelse{html}{\out{<p style='text-align:center;font-family:courier'>A[IDrowA,IDcolA]*B[IDrowB,IDcolB]</p>}}{\deqn{\code{A[IDrowA,IDcolA]*B[IDrowB,IDcolB]}}{A[IDrowA,IDcolA]*B[IDrowB,IDcolB]}}
 
-The function computes the Hadamard product directly from \ifelse{html}{\out{<b>A</b>}}{\eqn{\textbf{A}}{A}} and \ifelse{html}{\out{<b>B</b>}}{\eqn{\textbf{B}}{B}} without forming \ifelse{html}{\out{<b>A</b><sub>0</sub>}}{\eqn{\textbf{A}_{0}}{A0}} or \ifelse{html}{\out{<b>B</b><sub>0</sub>}}{\eqn{\textbf{B}_{0}}{B0}} matrices.
+The function computes the Hadamard product directly from \ifelse{html}{\out{<b>A</b>}}{\eqn{\textbf{A}}{A}} and \ifelse{html}{\out{<b>B</b>}}{\eqn{\textbf{B}}{B}} without forming \ifelse{html}{\out{<b>R</b><sub>1</sub> <b>A</b> <b>C'</b><sub>1</sub>}}{\eqn{\textbf{R}_{1}\textbf{A}\textbf{C}'_{1}}{R1 A C1'}} or 
+\ifelse{html}{\out{<b>R</b><sub>2</sub> <b>B</b> <b>C'</b><sub>2</sub>}}{\eqn{\textbf{R}_{2}\textbf{B}\textbf{C}'_{2}}{R2 B C2'}}
+matrices.
 
 }
 \examples{
@@ -72,16 +82,16 @@ The function computes the Hadamard product directly from \ifelse{html}{\out{<b>A
   # Define size of the Hadamard n1 x n2
   n1 = 1000
   n2 = 500
-  rowsA = sample(seq(nA[1]), n1, replace=TRUE)
-  rowsB = sample(seq(nB[1]), n1, replace=TRUE)
-  colsA = sample(seq(nA[2]), n2, replace=TRUE)
-  colsB = sample(seq(nB[2]), n2, replace=TRUE)
+  IDrowA = sample(seq(nA[1]), n1, replace=TRUE)
+  IDrowB = sample(seq(nB[1]), n1, replace=TRUE)
+  IDcolA = sample(seq(nA[2]), n2, replace=TRUE)
+  IDcolB = sample(seq(nB[2]), n2, replace=TRUE)
   
   # Direct hadamard product
-  K1 = A[rowsA,colsA]*B[rowsB,colsB]
+  K1 = A[IDrowA,IDcolA]*B[IDrowB,IDcolB]
   
   # Using 'Hadamard' function
-  K2 = Hadamard(A, B, rowsA, rowsB, colsA, colsB)
+  K2 = Hadamard(A, B, IDrowA, IDrowB, IDcolA, IDcolB)
   
   all.equal(K1,K2)  # They should be equal
   
@@ -107,5 +117,4 @@ The function computes the Hadamard product directly from \ifelse{html}{\out{<b>A
   K2 = Hadamard(A, B, IDA, IDB, make.dimnames=TRUE)
   
   all.equal(K1,K2)  # They should be equal
-
 }

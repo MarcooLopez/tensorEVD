@@ -4,11 +4,7 @@ output:
   html_document:
     css: style.css
     toc: true
-    toc_float: true
-vignette: >
-  %\VignetteIndexEntry{Hadamard}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+    toc_float: false
 ---
 
 ```{r initialsetup, include=FALSE}
@@ -48,11 +44,16 @@ all.equal(K1, K2) # should be equal
 
 ```{r eval=TRUE, echo=TRUE}
 a <- 10
-( B <- matrix(1:6, ncol=2) )
+B <- matrix(1:6, ncol=2)
 
 a*B    # using the product operator
-try(Hadamard(a, B), silent=TRUE)[[1]]
-Kronecker(a, B)  # Kronecker instead of Hadamard
+try(Hadamard(a, B), silent=TRUE)[[1]] # Hadamard function produces an error
+```
+
+Making the product is possible using `IDrowA` and `IDcolA` arguments (see next section)
+
+```{r eval=TRUE, echo=TRUE}
+Hadamard(a, B, IDrowA=rep(1,nrow(B)), IDcolA=rep(1,ncol(B)))
 ```
 
 ### Hadamard with incompatible matrices
@@ -73,60 +74,60 @@ However, a Hadamard product can be still performed between $\textbf{A}$ and $\te
 
 #### Subsetting one matrix
 
-A Hadamard product between $\textbf{B}$ and a submatrix of $\textbf{A}$ can be performed by doing
+A Hadamard product between $\textbf{B}$ and a sub-matrix of $\textbf{A}$ can be performed by doing
 
 $$
 (\textbf{R}\textbf{A}\textbf{C}') \odot \textbf{B}
 $$
 
-where $\textbf{R}$ and $\textbf{C}$ are incidence matrices for rows and columns, respectively.
+where $\textbf{R}$ and $\textbf{C}$ are incidence matrices mapping, respectively, from rows and columns of $\textbf{A}$ to rows and columns of the sub-matrix.
 
-Product matrix $\textbf{R}\textbf{A}\textbf{C}'$ can be obtained by matrix indexing using, for instance, integer vectors `rowsA` and `colsA`, as `A[rowsA,colsA]`. Therefore, the Hadamard product can be obtained by doing `A[rowsA,colsA]*B`. This Hadamard will be of the same dimensions as $\textbf{B}$.
+Product matrix $\textbf{R}\textbf{A}\textbf{C}'$ can be obtained by matrix indexing using, for instance, integer vectors `IDrowA` and `IDcolA`, as `A[IDrowA,IDcolA]`. Therefore, the Hadamard product can be obtained by doing `A[IDrowA,IDcolA]*B`. This Hadamard will be of the same dimensions as $\textbf{B}$.
 
-The `Hadamard()` function computes this Hadamard product directly from $\textbf{A}$ without forming `A[rowsA,colsA]` matrices. For example
+The `Hadamard()` function computes this Hadamard product directly from $\textbf{A}$ without forming `A[IDrowA,IDcolA]` matrices. For example
 
 ```{r eval=TRUE, echo=TRUE}
 # Subsetting rows and columns of A each of length 
 # equal to nrow(B) and ncol(B), respectively
-rowsA <- sample(seq(nrow(A)), nrow(B), replace=TRUE)
-colsA <- sample(seq(ncol(A)), ncol(B), replace=TRUE)
+IDrowA <- sample(seq(nrow(A)), nrow(B), replace=TRUE)
+IDcolA <- sample(seq(ncol(A)), ncol(B), replace=TRUE)
 
 # Making the Hadamard product
-K1 <- A[rowsA,colsA]*B
-K2 <- Hadamard(A, B, rowsA=rowsA, colsA=colsA)
+K1 <- A[IDrowA,IDcolA]*B
+K2 <- Hadamard(A, B, IDrowA=IDrowA, IDcolA=IDcolA)
 
 all.equal(K1, K2)
 dim(K2) == dim(B) # has the same dimension as B
 ```
 
-Likewise, a Hadamard product between $\textbf{A}$ and a submatrix of $\textbf{B}$, say `B[rowsB,colsB]`, can be performed. For example,
+Likewise, a Hadamard product between $\textbf{A}$ and a sub-matrix of $\textbf{B}$, say `B[IDrowB,IDcolB]`, can be performed. For example,
 
 ```{r eval=TRUE, echo=TRUE}
-rowsB <- sample(seq(nrow(B)), nrow(A), replace=TRUE)
-colsB <- sample(seq(ncol(B)), ncol(A), replace=TRUE)
+IDrowB <- sample(seq(nrow(B)), nrow(A), replace=TRUE)
+IDcolB <- sample(seq(ncol(B)), ncol(A), replace=TRUE)
 
-K2 <- Hadamard(A, B, rowsB=rowsB, colsB=colsB)
+K2 <- Hadamard(A, B, IDrowB=IDrowB, IDcolB=IDcolB)
 dim(K2) == dim(A) 
 ```
 
-#### Hadamard between two submatrices
+#### Hadamard between two sub-matrices
 
-A Hadamard product between a submatrix of $\textbf{A}$ and a submatrix of $\textbf{B}$ can be computed if the indexed matrices `A[rowsA,colsA]` and `B[rowsB,colsB]` are compatible, i.e., as long as, `length(rowsA)` = `length(rowsB)` and `length(colsA)` = `length(colsB).` Therefore, this allows to obtain a Hadamard product of any desirable dimension different from that of $\textbf{A}$ or $\textbf{B}$.
+A Hadamard product between a sub-matrix of $\textbf{A}$ and a sub-matrix of $\textbf{B}$ can be computed if the indexed matrices `A[IDrowA,IDcolA]` and `B[IDrowB,IDcolB]` are compatible, i.e., as long as, `length(IDrowA)` = `length(IDrowB)` and `length(IDcolA)` = `length(IDcolB).` Therefore, this allows to obtain a Hadamard product of any desirable dimension different from that of $\textbf{A}$ or $\textbf{B}$.
 
 ```{r eval=TRUE, echo=TRUE}
 dm <- c(1000, 2000)  # a Hadamard of 1000 x 2000
 
-# Obtaining a submatrix from A
-rowsA <- sample(seq(nrow(A)), dm[1], replace=TRUE)
-colsA <- sample(seq(ncol(A)), dm[2], replace=TRUE)
+# Obtaining a sub-matrix from A
+IDrowA <- sample(seq(nrow(A)), dm[1], replace=TRUE)
+IDcolA <- sample(seq(ncol(A)), dm[2], replace=TRUE)
 
-# Obtaining a submatrix from B
-rowsB <- sample(seq(nrow(B)), dm[1], replace=TRUE)
-colsB <- sample(seq(ncol(B)), dm[2], replace=TRUE)
+# Obtaining a sub-matrix from B
+IDrowB <- sample(seq(nrow(B)), dm[1], replace=TRUE)
+IDcolB <- sample(seq(ncol(B)), dm[2], replace=TRUE)
 
 # Making the Hadamard product
-K1 <- A[rowsA,colsA]*B[rowsB,colsB]
-K2 <- Hadamard(A, B, rowsA=rowsA, rowsB=rowsB, colsA=colsA, colsB=colsB)
+K1 <- A[IDrowA,IDcolA]*B[IDrowB,IDcolB]
+K2 <- Hadamard(A, B, IDrowA=IDrowA, IDrowB=IDrowB, IDcolA=IDcolA, IDcolB=IDcolB)
 
 all.equal(K1, K2)
 ```
@@ -139,8 +140,9 @@ Here we compare the speed performance of the `Hadamard()` function and of the pr
 - Memory: 64 GB in RAM
 - R version 4.1.1 (2021-08-10)
 
-<center>
+<p style="text-align: center">
 ![](fig_hadamard_bm1.png){ width=95% }`
+</p>
 
 ### Extras
 
@@ -158,7 +160,7 @@ K <- Hadamard(A, B)
 c(K=pryr::address(K), A=pryr::address(A))
 ```
 
-The parameter `inplace` can be used to store the output at the same address as the input:
+The argument `inplace` can be used to store the output at the same address as the input:
 
 ```{r eval=TRUE, echo=TRUE}
 A <- Hadamard(A, B, inplace=TRUE)
@@ -178,6 +180,6 @@ dimnames(A) <- list(paste("week",1:4), month.abb[1:4])
 dimnames(B) <- list(c("chicken","beef","pork","fish"), LETTERS[1:4])
 
 Hadamard(A, B, make.dimnames=TRUE)
-Hadamard(A, B, make.dimnames=TRUE, colsA=c(1,1,1,1), rowsB=c(2,3,2,3))
+Hadamard(A, B, make.dimnames=TRUE, IDcolA=c(1,1,1,1), IDrowB=c(2,3,2,3))
 ```
 

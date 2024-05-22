@@ -48,8 +48,8 @@ Let the \ifelse{html}{\out{<i>n</i> &times; <i>n</i>}}{\eqn{n\times n}{n x n}} m
 
 where
 \ifelse{html}{\out{<b>Z</b><sub>1</sub>}}{\eqn{\textbf{Z}_{1}}{Z1}} and
-\ifelse{html}{\out{<b>Z</b><sub>2</sub>}}{\eqn{\textbf{Z}_{2}}{Z2}} are incidence matrices that can be formed by integer vectors
-\code{ID1} and \code{ID2} of length \ifelse{html}{\out{<i>n</i>}}{\eqn{n}{n}}, respectively.
+\ifelse{html}{\out{<b>Z</b><sub>2</sub>}}{\eqn{\textbf{Z}_{2}}{Z2}} are incidence matrices mapping from rows (and columns) of the resulting Hadamard to rows (and columns) of \ifelse{html}{\out{<b>K</b><sub>1</sub>}}{\eqn{\textbf{K}_{1}}{K1}} and
+\ifelse{html}{\out{<b>K</b><sub>2</sub>}}{\eqn{\textbf{K}_{2}}{K2}}, respectively. 
 
 Let the eigenvalue decomposition (EVD) of \ifelse{html}{\out{<b>K</b><sub>1</sub>}}{\eqn{\textbf{K}_{1}}{K1}} and
 \ifelse{html}{\out{<b>K</b><sub>2</sub>}}{\eqn{\textbf{K}_{2}}{K2}} to be
@@ -80,6 +80,11 @@ Each tensor eigenvector \ifelse{html}{\out{<i>k</i>}}{\eqn{k}{k}} is derived sep
 \ifelse{html}{\out{<b>V</b><sub>2</sub>}}{\eqn{\textbf{V}_{2}}{V2}}, respectively, this is
 
 \ifelse{html}{\out{<p style='text-align:center'><b>v</b><sub>k</sub> = (<b>Z</b><sub>1</sub><b>v</b><sub>1i(k)</sub>)&odot;(<b>Z</b><sub>2</sub><b>v</b><sub>2j(k)</sub>)</p>}}{\deqn{\textbf{v}_{k}=(\textbf{Z}_{1}\textbf{v}_{1i(k)})\odot(\textbf{Z}_{2}\textbf{v}_{2j(k)})}{v_k = Hadamard(Z1 v_1i(k), Z2 v_2j(k))}}
+
+The \code{tensorEVD} function derives each of these eigenvectors \ifelse{html}{\out{<b>v</b><sub>k</sub>}}{\eqn{\textbf{v}_{k}}{v_k}} by matrix indexing using integer vectors \code{ID1} and \code{ID2}. The entries of these vectors are the row (and column) number of 
+\ifelse{html}{\out{<b>K</b><sub>1</sub>}}{\eqn{\textbf{K}_{1}}{K1}} and 
+\ifelse{html}{\out{<b>K</b><sub>2</sub>}}{\eqn{\textbf{K}_{2}}{K2}} that are mapped at each row of \ifelse{html}{\out{<b>Z</b><sub>1</sub>}}{\eqn{\textbf{Z}_{1}}{Z1}} and
+\ifelse{html}{\out{<b>Z</b><sub>2</sub>}}{\eqn{\textbf{Z}_{2}}{Z2}}, respectively.
 
 }
 \examples{
@@ -168,6 +173,5 @@ Each tensor eigenvector \ifelse{html}{\out{<i>k</i>}}{\eqn{k}{k}} is derived sep
   EVD = tensorEVD(K1, K2, ID1, ID2)
 
   c(eigen=sum(EVD0$values>1E-10), tensorEVD=sum(EVD$values>1E-10))
-  
 }
 

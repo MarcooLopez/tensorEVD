@@ -1,96 +1,60 @@
 #include "tensorEVD.h"
 
-// ----------------------------------------------------------
-// Return sorted (descendant order) indices for a vector of
-// numeric values. The ordered position of the element k,
-// values[k], is found by comparing with the (ordered) values
-// of the previous k-1 values. This is, by finding the last
-// index order[j] (j=0,1,...,k) such that
-//                values[order[j]] > values[k]
-// where 'order' contains the ordered indices for the first
-//        k elements of 'values': values[0],...,values[k-1]
-// The new vector with sorted indices will contain the k+1
-// elements:
-//    order[0],...,order[j-1], k, order[j],...,order[k-1]
-// ----------------------------------------------------------
-void append_to_sorted_vector(int k, double *values, int *order)
-{
-  int j;
-
-  if(k==0){
-    order[0] = k;
-  }else{
-    j=0;
-    while(values[order[j]]>values[k]){
-      j++;
-      if(j == k){
-        break;
-      }
-    }
-    if(j < k){
-      memmove(order + j+1, order + j, (k-j)*sizeof(int));
-    }
-    order[j]=k;
-  }
-}
-
 //==============================================================
-//  VK1:       Eigenvectors of K1
-//  VK2:       Eigenvectors of K2
-//  valuesK1:  Eigenvalues of K1
-//  valuesK2:  Eigenvalues of K2
+//  d1, V1:       Eigenvectors (n1 x nPC1) and eigenvalues of K1
+//  d2, V2:       Eigenvectors (n2 x nPC2) and eigenvalues of K2
 //  minvalue:  Minimum acepted value for the kronecker eigenvalues
 //             (i.e., valuesK1[i]*valuesK2[j])
-//  indexK1:   Which elements from K1 are included in the tensor, zero based
-//  indexK2:   which elements from K2 are included in the tensor, zero based
+//  index1:   Which elements from K1 are included in the tensor, zero based
+//  index2:   which elements from K2 are included in the tensor, zero based
 //  alpha:     Maximum percentage of variance explained
 //==============================================================
-SEXP R_tensor_evd(SEXP n_, SEXP n1_, SEXP n2_,
-                  SEXP V1_, SEXP V2_,
-                  SEXP d1_, SEXP d2_,
+SEXP R_tensor_evd(SEXP n_, SEXP n1_, SEXP nPC1_, SEXP n2_, SEXP nPC2_,
+                  SEXP d1_, SEXP V1_,
+                  SEXP d2_, SEXP V2_,
                   SEXP minvalue_, SEXP index1_, SEXP index2_,
                   SEXP alpha_,
-                  SEXP makedimnames_,
-                  SEXP verbose_)
+                  SEXP makedimnames_, SEXP verbose_)
 {
-    long long i, j;
     double *V2, *V1, *d1, *d2;
     int *index1, *index2;
 
-    int n=INTEGER_VALUE(n_);
-    int n1=Rf_length(d1_);
-    int n2=Rf_length(d2_);
-    double minvalue=NUMERIC_VALUE(minvalue_);
-    double alpha=NUMERIC_VALUE(alpha_);
-    int makedimnames=asLogical(makedimnames_);
-    int verbose=asLogical(verbose_);
+    int n = INTEGER_VALUE(n_);
+    int n1 = INTEGER_VALUE(n1_);
+    int nPC1 = INTEGER_VALUE(nPC1_);
+    int n2 = INTEGER_VALUE(n2_);
+    int nPC2 = INTEGER_VALUE(nPC2_);
+    double minvalue = NUMERIC_VALUE(minvalue_);
+    double alpha = NUMERIC_VALUE(alpha_);
+    int makedimnames = asLogical(makedimnames_);
+    int verbose = asLogical(verbose_);
     double eps = DBL_EPSILON*100;
 
-    PROTECT(V1_=AS_NUMERIC(V1_));
-    V1=NUMERIC_POINTER(V1_);
+    PROTECT(V1_ = AS_NUMERIC(V1_));
+    V1 = NUMERIC_POINTER(V1_);
 
-    PROTECT(V2_=AS_NUMERIC(V2_));
-    V2=NUMERIC_POINTER(V2_);
+    PROTECT(V2_ = AS_NUMERIC(V2_));
+    V2 = NUMERIC_POINTER(V2_);
 
-    PROTECT(d1_=AS_NUMERIC(d1_));
-    d1=NUMERIC_POINTER(d1_);
+    PROTECT(d1_ = AS_NUMERIC(d1_));
+    d1 = NUMERIC_POINTER(d1_);
 
-    PROTECT(d2_=AS_NUMERIC(d2_));
-    d2=NUMERIC_POINTER(d2_);
+    PROTECT(d2_ = AS_NUMERIC(d2_));
+    d2 = NUMERIC_POINTER(d2_);
 
-    PROTECT(index1_=AS_INTEGER(index1_));
-    index1=INTEGER_POINTER(index1_);
+    PROTECT(index1_ = AS_INTEGER(index1_));
+    index1 = INTEGER_POINTER(index1_);
 
-    PROTECT(index2_=AS_INTEGER(index2_));
-    index2=INTEGER_POINTER(index2_);
+    PROTECT(index2_ = AS_INTEGER(index2_));
+    index2 = INTEGER_POINTER(index2_);
 
-    int nmap=n1*n2;
-    double *d=(double *) R_alloc(nmap, sizeof(double));
-    double *w0=(double *) R_alloc(nmap, sizeof(double));
-    double *cumvar=(double *) R_alloc(nmap, sizeof(double));
-    int *order=(int *) R_alloc(nmap, sizeof(int));
-    int *K1i=(int *) R_alloc(nmap, sizeof(int));
-    int *K2i=(int *) R_alloc(nmap, sizeof(int));
+    int nmap = nPC1*nPC2;
+    double *d = (double *) R_alloc(nmap, sizeof(double));
+    double *w0 = (double *) R_alloc(nmap, sizeof(double));
+    double *cumvar = (double *) R_alloc(nmap, sizeof(double));
+    int *order = (int *) R_alloc(nmap, sizeof(int));
+    int *K1i = (int *) R_alloc(nmap, sizeof(int));
+    int *K2i = (int *) R_alloc(nmap, sizeof(int));
 
     // Get the PC's variances and total variance from the full Kronecker
     // The full design Kronecker has nK1*nK2 rows, positions will be saved in K1i and K2i
@@ -98,16 +62,19 @@ SEXP R_tensor_evd(SEXP n_, SEXP n1_, SEXP n2_,
     // They will be descendantly sorted to return the one with highest variance first
     // until the one that jointly explains certain proportion of total variance
     if(verbose){
-      Rprintf(" Calculating N=%d (%d x %d) tensor variances ...\n",nmap,n1,n2);
+      Rprintf(" EVD of K1: n1=%d loadings and nPC1=%d eigenvectors\n",n1,nPC1);
+      Rprintf(" EVD of K2: n2=%d loadings and nPC2=%d eigenvectors\n",n2,nPC2);
+      Rprintf(" Calculating N=%d (nPC1 x nPC2) tensor variances ...\n",nmap);
     }
     double totalvar = 0;
     int cont = 0;
-    for(i=0; i<n1; i++)  // loop over the rows of MAP
+    long long i, j;
+    for(i=0; i<nPC1; i++)  // loop over the rows of MAP
     {
-      for(j=0; j<n2; j++)
+      for(j=0; j<nPC2; j++)
       {
-        K1i[cont] = i;  // Storage the Kronecker positions for K1
-        K2i[cont] = j;  // Storage the Kronecker positions for K2
+        K1i[cont] = (int) i;  // Storage the Kronecker positions for K1
+        K2i[cont] = (int) j;  // Storage the Kronecker positions for K2
 
         // Get the norms of the Hadamard eigenvectors
         w0[cont] = dnorm_hadam_set(n, V1 + n1*i, index1, V2 + n2*j, index2);
@@ -128,7 +95,7 @@ SEXP R_tensor_evd(SEXP n_, SEXP n1_, SEXP n2_,
     int nd = nmap;  // N positive tensor eigenvalues
     for(i=0; i<nmap; i++){  // loop over the positive ones to get the minimum
       if(d[order[i]] < minvalue){
-        nd = i;
+        nd = (int) i;
         if(verbose){
           Rprintf(" Dropped bottom %d of %d eigenvectors with eigenvalue smaller than %.5e\n",nmap-nd,nmap,minvalue);
         }
@@ -146,7 +113,7 @@ SEXP R_tensor_evd(SEXP n_, SEXP n1_, SEXP n2_,
     int nPC = 0;
     for(i=0; i<nd; i++){
       if(fabs(fabs(cumvar[i]-alpha)-mindif) <= eps){
-        nPC = i + 1;
+        nPC = (int) i + 1;
         break;
       }
     }

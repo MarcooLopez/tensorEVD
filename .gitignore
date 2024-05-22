@@ -13,3 +13,5 @@ src/*.dll
 doc/
 Meta/
 build/
+/doc/
+/Meta/

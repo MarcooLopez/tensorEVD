@@ -1,16 +1,17 @@
 Package: tensorEVD
 Title: A Fast Algorithm to Factorize High-Dimensional Tensor Product Matrices
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: c(
-    person("Marco", "Lopez-Cruz", role = c("aut","cre"), email = "lopezcru@msu.edu"),
+    person("Marco", "Lopez-Cruz", role = c("aut","cre"), email = "maraloc@gmail.com"),
     person("Gustavo", "de los Campos", role = c("aut"), email = "gustavoc@msu.edu"),
     person("Paulino", "Perez-Rodriguez", role = c("aut"), email = "perpdgo@colpos.mx"))
-Date: 2024-02-07
+Date: 2024-05-22
 Description: Here we provide tools for the computation and factorization of high-dimensional
 	     tensor products that are formed by smaller matrices. The methods are based on
 	     properties of Kronecker products (Searle 1982, p. 265, ISBN-10: 0470009616). 
 	     We evaluated this methodology by benchmark testing and illustrated its use in 
 	     Gaussian Linear Models ('Lopez-Cruz et al., 2024') <doi:10.1093/g3journal/jkae001>.
+URL: https://github.com/MarcooLopez/tensorEVD 
 LazyLoad: true
 Depends: R (>= 3.6.0)
 Suggests: knitr, rmarkdown, ggplot2, ggnewscale, reshape2, RColorBrewer, pryr

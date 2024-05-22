@@ -10,14 +10,34 @@ author:
     - ^$\star$^Corresponding author (<lopezcru@msu.edu>)
 output:
   html_document:
-    css: style.css
     toc: true
-    toc_float: true
+    toc_float: 
+      collapsed: no
 vignette: >
   %\VignetteIndexEntry{Documentation: A fast algorithm to factorize high-dimensional tensor product matrices}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+<style>
+ body{
+   background-color: white;
+ }
+ h1{
+   color: maroon;
+ }
+ h2{
+   color: #D2691E;
+ }
+ h3{
+   color: #D2691E;
+ }
+ h4{
+   color: #D2691E;
+ }
+ p{
+   color: gray30;
+ }
+</style>
 
 ```{r initialsetup, include=FALSE}
 knitr::opts_chunk$set(cache=FALSE)

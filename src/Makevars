@@ -5,7 +5,6 @@ PKG_CFLAGS = -I.
 R_SOURCES = \
 			c_tensor_evd.o \
 			c_hadamard.o \
-			c_kronecker_cov.o \
 			init.o \
 			utils.o
 

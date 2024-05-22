@@ -7,10 +7,12 @@
 
 The 'tensorEVD' R-package offers tools for calculation and factorization of high-dimensional tensor products (Hadamard and Kronecker) that are formed by smaller matrices.
 
-*Last update: Feb 07, 2024*
+**Funding**: [NSF PGRP-Tech Grant 2035472](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2035472&HistoricalAwards=false).
+
+*Last update: May 22, 2024*
 
 ## Installation
-Installation of 'tensorEVD' package requires an R-version &ge; 3.6.0. 
+Installation of 'tensorEVD' package requires an R-version &ge; 3.6.0.
 
 From CRAN (stable version)
 ```r
@@ -36,14 +38,14 @@ help(package='tensorEVD', help_type='html')
 ## Examples
 Here we present examples on the use of the functions included in the package.
 
-* [Kronecker product](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/master/inst/doc/kronecker.html)
-* [Hadamard product](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/master/inst/doc/hadamard.html)
-* [Tensor EVD](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/master/inst/doc/tensorEVD.html)
+* [Hadamard product](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/main/inst/Rmd/hadamard.html)
+* [Kronecker product](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/main/inst/Rmd/kronecker.html)
+* [Tensor EVD](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/main/inst/Rmd/tensorEVD.html)
 
 ## Application
 We provide benchmarks and an application in Genomic Prediction of the *tensorEVD*() function using data from the Genomes-to-Field (G2F) Initiative
 
-* Lopez-Cruz *et al.*, 2024. *G3:Genes|Genomes|Genetics* [[Manuscript](https://academic.oup.com/g3journal/advance-article/doi/10.1093/g3journal/jkae001/7511334)] [[Documentation](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/master/inst/doc/tensorEVD-documentation.html)]
+* Lopez-Cruz *et al.*, 2024. *G3:Genes|Genomes|Genetics* [[Manuscript](https://academic.oup.com/g3journal/article/14/3/jkae001/7511334)] [[Documentation](http://htmlpreview.github.io/?https://github.com/MarcooLopez/tensorEVD/blob/master/inst/doc/tensorEVD-documentation.html)]
 
 ## Citation
-Lopez-Cruz M, Pérez-Rodríguez Paulino, and de los Campos G. **2024**. A fast algorithm to factorize high-dimensional Tensor Product matrices used in Genetic Models. *G3 Genes|Genomes|Genetics*. jkae001. doi: 10.1093/g3journal/jkae001
+Lopez-Cruz M, Pérez-Rodríguez Paulino, and de los Campos G. **2024**. A fast algorithm to factorize high-dimensional Tensor Product matrices used in Genetic Models. *G3 Genes|Genomes|Genetics* 14(3): 1-8. doi: 10.1093/g3journal/jkae001

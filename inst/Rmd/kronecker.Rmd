@@ -4,11 +4,7 @@ output:
   html_document:
     css: style.css
     toc: true
-    toc_float: true
-vignette: >
-  %\VignetteIndexEntry{Kronecker}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+    toc_float: false
 ---
 
 ```{r initialsetup, include=FALSE}
@@ -93,17 +89,17 @@ Here we compare these methods in terms of computational speed in scenarios with 
 
 ### Subsetting a Kronecker
 
-Selecting specific rows and columns from the Kronecker can be done by pre- and post- multiplication with incidence matrices, for instance
+A sub-matrix formed by selecting specific rows and columns from the Kronecker can be done by pre- and post- multiplication with incidence matrices, for instance
 
 $$
 \textbf{R}(\textbf{A}\otimes\textbf{B})\textbf{C}'
 $$
 
-where $\textbf{R}$ is an incidence matrix for rows and $\textbf{C}$ is an incidence matrix for columns.
+where $\textbf{R}$ and $\textbf{C}$ are an incidence matrices mapping, respectively, from rows and columns of the Kronecker to rows and columns of the sub-matrix.
 
-This sub-matrix can be obtained by indexing rows or columns using, for instance, integer vectors `rows` and `cols` as `Kronecker(A, B)[rows,cols]`. However, this approach computes first the Kronecker product then makes the sub-setting.
+This sub-matrix can be obtained by indexing rows or columns using, for instance, integer vectors `rows` and `cols` as `Kronecker(A, B)[rows,cols]`. However, this approach computes first the Kronecker product then makes the subsetting.
 
-This approach can be inefficient if a relatively small number of rows and columns are to be selected. The `Kronecker()` function can derive this sub-matrix directly from $\textbf{A}$ and $\textbf{B}$ on the fly without forming the whole Kronecker product using `rows` and `cols` as arguments. For example,
+This approach can be inefficient if a relatively small number of rows and columns are to be selected. The `Kronecker()` function can derive this sub-matrix directly from $\textbf{A}$ and $\textbf{B}$ on the fly without forming the full Kronecker product using `rows` and `cols` as arguments. For example,
 
 ```{r eval=TRUE, echo=TRUE}
 dm <- c(nrow(A)*nrow(B), ncol(A)*ncol(B))    # dimension of the Kronecker

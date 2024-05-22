@@ -2,9 +2,9 @@
 #====================================================================
 # Hadamard product between matrices A and B
 #====================================================================
-# colsA = NULL; colsB = NULL; drop <- TRUE; make.dimnames <- inplace <- FALSE
-Hadamard <- function(A, B, rowsA, rowsB,
-                     colsA = NULL, colsB = NULL,
+# IDcolA = NULL; IDcolB = NULL; drop <- TRUE; make.dimnames <- inplace <- FALSE
+Hadamard <- function(A, B, IDrowA, IDrowB,
+                     IDcolA = NULL, IDcolB = NULL,
                      make.dimnames = FALSE, drop = TRUE,
                      inplace = FALSE)
 {
@@ -15,108 +15,87 @@ Hadamard <- function(A, B, rowsA, rowsB,
   if((length(dim(B)) != 2L)){
     B <- as.matrix(B, ncol=1L)
   }
-
   dmA <- dim(A)
   dmB <- dim(B)
 
   # Match rows IDs
   fixedA <- fixedB <- c(FALSE,FALSE)
-  if(missing(rowsA)){
-    indexrowA <- seq(0,dmA[1]-1)
+  if(missing(IDrowA)){
+    irowA <- seq(0,dmA[1]-1)   # zero-based indices
     fixedA[1] <- TRUE
   }else{
-    indexrowA <- get_index(dmA[1], rownames(A), rowsA)
-    if(is.null(indexrowA)){
-      stop("'rowsA' could not be matched to rows of 'A'")
+    irowA <- match_ID(A, IDrowA, MARGIN=1, check=FALSE)
+    if(is.null(irowA)){
+      stop("'IDrowA' could not be matched to rows of 'A'")
     }
-    indexrowA <- indexrowA-1  # to pass zero-based indices
   }
 
-  if(missing(rowsB)){
-    indexrowB <- seq(0,dmB[1]-1)
+  if(missing(IDrowB)){
+    irowB <- seq(0,dmB[1]-1)   # zero-based indices
     fixedB[1] <- TRUE
   }else{
-    indexrowB <- get_index(dmB[1], rownames(B), rowsB)
-    if(is.null(indexrowB)){
-      stop("'rowsB' could not be matched to rows of 'B'")
+    irowB <- match_ID(B, IDrowB, MARGIN=1, check=FALSE)
+    if(is.null(irowB)){
+      stop("'IDrowB' could not be matched to rows of 'B'")
     }
-    indexrowB <- indexrowB-1  # to pass zero-based indices
   }
 
   # Checkpoint for rows IDs
-  if(length(indexrowA) != length(indexrowB)){
-    tmp <- c(ifelse(fixedA[1],"'rowsA'",NA),ifelse(fixedB[1],"'rowsB'",NA))
-    tmp <- paste0(".\nOtherwise, provide parameter(s) ",paste(tmp[!is.na(tmp)],collapse=" and "))
-    tmp <- ifelse(any(c(fixedA[1],fixedB[1])),tmp,"")
-    stop(ifelse(fixedA[1],"'nrow(A)'","'length(rowsA)'")," should be the same as ",
-         ifelse(fixedB[1],"'nrow(B)'","'length(rowsB)'"),tmp)
+  if(length(irowA) != length(irowB)){
+    stop("No compatibility. Provide either matrices with equal number of rows\n",
+         "  or 'IDrowA' and/or 'IDrowB' vectors of the same length")
   }
-  nrows <- length(indexrowA)
 
   # Match columns IDs
-  indexcolA <- indexcolB <- NULL
-  if(is.null(colsA)){
-    tmp <- (dmA[1]==dmA[2]) & has_names(A)
-    flag <- ifelse(tmp, all(rownames(A)==colnames(A)), FALSE)
-    if(flag){
-      indexcolA <- indexrowA
+  icolA <- icolB <- NULL
+  if(is.null(IDcolA)){
+    if(ifelse(dmA[1]==dmA[2],all(rownames(A)==colnames(A)),FALSE)){
+      icolA <- irowA
       fixedA[2] <- fixedA[1]
     }else{
-      indexcolA <- seq(0,dmA[2]-1)
+      icolA <- seq(0,dmA[2]-1)   # zero-based indices
       fixedA[2] <- TRUE
     }
   }else{
-    indexcolA <- get_index(dmA[2], colnames(A), colsA)
-    if(is.null(indexcolA)){
-      stop("'colsA' could not be matched to columns of 'A'")
+    icolA <- match_ID(A, IDcolA, MARGIN=2, check=FALSE)
+    if(is.null(icolA)){
+      stop("'IDcolA' could not be matched to columns of 'A'")
     }
-    indexcolA <- indexcolA-1  # to pass zero-based indices
   }
 
-  if(is.null(colsB)){
-    tmp <- (dmB[1]==dmB[2]) & has_names(B)
-    flag <- ifelse(tmp, all(rownames(B)==colnames(B)), FALSE)
-    if(flag){
-      indexcolB <- indexrowB
+  if(is.null(IDcolB)){
+    if(ifelse(dmB[1]==dmB[2],all(rownames(B)==colnames(B)),FALSE)){
+      icolB <- irowB
       fixedB[2] <- fixedB[1]
     }else{
-      indexcolB <- seq(0,dmB[2]-1)
+      icolB <- seq(0,dmB[2]-1)   # zero-based indices
       fixedB[2] <- TRUE
     }
   }else{
-    indexcolB <- get_index(dmB[2], colnames(B), colsB)
-    if(is.null(indexcolB)){
-      stop("'colsB' could not be matched to columns of 'B'")
+    icolB <- match_ID(B, IDcolB, MARGIN=2, check=FALSE)
+    if(is.null(icolB)){
+      stop("'IDcolB' could not be matched to columns of 'B'")
     }
-    indexcolB <- indexcolB-1  # to pass zero-based indices
   }
 
-  if(length(indexcolA) != length(indexcolB)){
-    tmp <- c(ifelse(is.null(colsA)&fixedA[2],"'colsA'",NA),ifelse(is.null(colsB)&fixedB[2],"'colsB'",NA))
-    tmp <- paste0(".\nOtherwise, provide parameter(s) ",paste(tmp[!is.na(tmp)],collapse=" and "))
-    tmp <- ifelse((is.null(colsA)&fixedA[2])|(is.null(colsB)&fixedB[2]),tmp,"")
-    tt1 <- ifelse(is.null(colsA),ifelse(fixedA[2],"ncol(A)","length(rowsA)"),"length(colsA)")
-    tt2 <- ifelse(is.null(colsB),ifelse(fixedB[2],"ncol(B)","length(rowsB)"),"length(colsB)")
-    stop("'",tt1,"' should be the same as '",tt2,"'",tmp)
+  if(length(icolA) != length(icolB)){
+    stop("No compatibility. Provide either matrices with equal number of columns\n",
+         "  or 'IDcolA' and/or 'IDcolB' vectors of the same length")
   }
-  ncols <- length(indexcolA)
 
   if(inplace){
-    inplace2 <- ifelse(all(fixedA),1,ifelse(all(fixedB),2,0))
-    if(inplace2 == 0){
+    inplace <- ifelse(all(fixedA),1,ifelse(all(fixedB),2,0))
+    if(inplace == 0){
       stop("'inplace' calculation can be only applied when either 'A' or 'B' are not resized as per ",
-           "the 'rows' and 'cols' parameters")
+           "the 'IDrow' and 'IDcol' parameters")
     }
   }else{
-    inplace2 <- 0
+    inplace <- 0
   }
 
   #dyn.load("c_hadamard.so")
-  return(.Call('R_hadamard', dmA[1], dmA[2], A, dmB[1], dmB[2], B,
-                             nrows, ncols, NULL,
-                             indexrowA, indexcolA,
-                             indexrowB, indexcolB,
-                             drop, FALSE, make.dimnames, inplace2))
+  return(.Call('R_hadamard', dmA[1], dmA[2], A, dmB[1], dmB[2], B, NULL,
+                             irowA, icolA, irowB, icolB,
+                             NULL, drop, make.dimnames, inplace))
   #dyn.unload("c_hadamard.so")
-
 }

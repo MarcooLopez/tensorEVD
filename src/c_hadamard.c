@@ -1,27 +1,33 @@
 #include "tensorEVD.h"
 
 //==============================================================
+// Calculate the entry-wise product
+//     A[irowA,icolA]*B[irowB,icolB]
+// A is of dimensions: nrowA,ncolA
+// B is of dimensions: nrowB,ncolB
+//
+// For squared matrices (irowA=icolA and irowB=icolB):
+//     A[irowA,icolA]*B[irowB,icolB] + C[irowA,icolA]*I[irowB,icolB]
+// A and C are of the same dimensions
+// B and I are of the same dimensions
 //==============================================================
 SEXP R_hadamard(SEXP nrowA_, SEXP ncolA_, SEXP A_,
                 SEXP nrowB_, SEXP ncolB_, SEXP B_,
-                SEXP nrow_, SEXP ncol_, SEXP out_,
+                SEXP C_,  // Optional matrix of the same dimension as A
                 SEXP irowA_, SEXP icolA_,
                 SEXP irowB_, SEXP icolB_,
-                SEXP drop_, SEXP kronecker_,
+                SEXP out_, SEXP drop_,
                 SEXP makedimnames_, SEXP inplace_)
 {
     int nprotect = 4;
 
-    int nrow=INTEGER_VALUE(nrow_);
-    int ncol=INTEGER_VALUE(ncol_);
-    int nrowA=INTEGER_VALUE(nrowA_);
-    int ncolA=INTEGER_VALUE(ncolA_);
-    int nrowB=INTEGER_VALUE(nrowB_);
-    int ncolB=INTEGER_VALUE(ncolB_);
-    int drop=asLogical(drop_);
-    int kronecker=asLogical(kronecker_);
-    int makedimnames=asLogical(makedimnames_);
-    int inplace=INTEGER_VALUE(inplace_);
+    int nrowA = INTEGER_VALUE(nrowA_);
+    //int ncolA = INTEGER_VALUE(ncolA_);
+    int nrowB = INTEGER_VALUE(nrowB_);
+    //int ncolB = INTEGER_VALUE(ncolB_);
+    int drop = asLogical(drop_);
+    int makedimnames = asLogical(makedimnames_);
+    int inplace = INTEGER_VALUE(inplace_);
 
     PROTECT(A_ = AS_NUMERIC(A_));
     double *A = NUMERIC_POINTER(A_);
@@ -29,56 +35,34 @@ SEXP R_hadamard(SEXP nrowA_, SEXP ncolA_, SEXP A_,
     PROTECT(B_ = AS_NUMERIC(B_));
     double *B = NUMERIC_POINTER(B_);
 
+    int nrow = Rf_length(irowA_);
+    int ncol;
+
     int *irowA, *icolA, *irowB, *icolB;
-    if(kronecker)
-    { // We take irow/icol indices for the output as those provided in irowA/icolA
-      int nirow=Rf_length(irowA_);
-      int nicol=Rf_length(icolA_);
 
-      PROTECT(irowA_=AS_INTEGER(irowA_));
-      int *irow=INTEGER_POINTER(irowA_);
+    PROTECT(irowA_ = AS_INTEGER(irowA_));
+    irowA = INTEGER_POINTER(irowA_);
 
-      PROTECT(icolA_=AS_INTEGER(icolA_));
-      int *icol=INTEGER_POINTER(icolA_);
+    PROTECT(irowB_=AS_INTEGER(irowB_));
+    irowB = INTEGER_POINTER(irowB_);
 
-      // Get positions for matrices A and B
-      irowA = (int *) R_alloc(nrow, sizeof(int));
-      irowB = (int *) R_alloc(nrow, sizeof(int));
-      get_kronecker_index(nrowA, nrowB, irowA, irowB, nirow, irow);
-
-      if((nrowA==ncolA) && (nrowB==ncolB) && ((nirow+nicol)==0)){
-        // If both are squared matrices, do not repeat the indices
-        icolA = irowA;
-        icolB = irowB;
-      }else{
-        icolA=(int *) R_alloc(ncol, sizeof(int));
-        icolB=(int *) R_alloc(ncol, sizeof(int));
-        get_kronecker_index(ncolA, ncolB, icolA, icolB, nicol, icol);
-      }
-
+    if(Rf_length(icolA_) == 0){
+      icolA = irowA;
+      ncol = nrow;
     }else{
-      PROTECT(irowA_=AS_INTEGER(irowA_));
-      irowA=INTEGER_POINTER(irowA_);
+      ncol = Rf_length(icolA_);
 
-      PROTECT(irowB_=AS_INTEGER(irowB_));
-      irowB=INTEGER_POINTER(irowB_);
+      PROTECT(icolA_ = AS_INTEGER(icolA_));
+      icolA = INTEGER_POINTER(icolA_);
+      nprotect++;
+    }
 
-      if(Rf_length(icolA_) == 0){
-        icolA = irowA;
-      }else{
-        PROTECT(icolA_=AS_INTEGER(icolA_));
-        icolA=INTEGER_POINTER(icolA_);
-        nprotect++;
-      }
-
-      if(Rf_length(icolB_) == 0){
-        icolB = irowB;
-      }else{
-        PROTECT(icolB_=AS_INTEGER(icolB_));
-        icolB=INTEGER_POINTER(icolB_);
-        nprotect++;
-      }
-
+    if(Rf_length(icolB_) == 0){
+      icolB = irowB;
+    }else{
+      PROTECT(icolB_ = AS_INTEGER(icolB_));
+      icolB = INTEGER_POINTER(icolB_);
+      nprotect++;
     }
 
     // Rprintf(" Allocating memory for Hadamard product ...\n");
@@ -86,6 +70,7 @@ SEXP R_hadamard(SEXP nrowA_, SEXP ncolA_, SEXP A_,
     int ismatrix = 1;
     double *out2;
     if(inplace == 0){
+      // Rprintf(" New memory for a %d x %d matrix\n",nrow,ncol);
       if((nrow==1) || (ncol==1))
       {
         if(drop){
@@ -102,6 +87,7 @@ SEXP R_hadamard(SEXP nrowA_, SEXP ncolA_, SEXP A_,
 
     }else{
       //out2_ = R_NilValue;
+      // Rprintf(" Memory from input %d\n",inplace);
       if(inplace == 1){
         out2 = A;
         out2_ = A_;
@@ -111,15 +97,33 @@ SEXP R_hadamard(SEXP nrowA_, SEXP ncolA_, SEXP A_,
       }
     }
 
-    //Rprintf(" Making the Hadamard product ...\n");
+    // Rprintf(" Making the Hadamard product ...\n");
     double a = 1.0;
     size_t j;
     for(j=0; j<ncol; j++){
       hadam_set(nrow, &a, A + (long long)nrowA*icolA[j], irowA, B + (long long)nrowB*icolB[j], irowB, out2 + nrow*j);
     }
 
-    //Rprintf(" Making dimnames ...\n");
+    if(!Rf_isNull(C_)){
+      // Rprintf(" Making shifting ...\n");
+      PROTECT(C_ = AS_NUMERIC(C_));
+      double *C = NUMERIC_POINTER(C_);
+      nprotect++;
+
+      // The output is now a full matrix, thus a common shifting code is applied
+      size_t i;
+      for(j=0; j<ncol; j++){
+        for(i=0; i<nrow; i++){
+          if(irowB[i] == icolB[j]){ //if(irowA[i] == icolA[j]){
+            //out2[nrow*j + i] += C[nrowB*(long long)icolB[j] + (long long)irowB[i]];
+            out2[nrow*j + i] += C[nrowA*(long long)icolA[j] + (long long)irowA[i]];
+          }
+        }
+      }
+    }
+
     if(ismatrix && makedimnames && (inplace==0)){
+      // Rprintf(" Making dimnames ...\n");
       setAttrib(out2_, R_DimNamesSymbol,
                 get_dimnames(nrow,ncol,irowA,irowB,NULL,icolA,icolB,NULL,
                              getAttrib(A_, R_DimNamesSymbol),
