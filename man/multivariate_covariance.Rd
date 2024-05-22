@@ -176,7 +176,6 @@ and then calculates and adds accordingly only the non-zero entries of the second
   
   # it must equal to:
   I0 = diag(n)    # diagonal matrix of dimension n
-  #G0 = Sigma[IDS,IDS]*K[IDK,IDK] + Theta[IDS,IDS]*I0[IDK,IDK]
-  G0 = Hadamard(Sigma,K,IDS,IDK) + Hadamard(Theta,I0,IDS,IDK)
+  G0 = Sigma[IDS,IDS]*K[IDK,IDK] + Theta[IDS,IDS]*I0[IDK,IDK]
   all.equal(G,G0)
 }
