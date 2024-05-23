@@ -40,20 +40,26 @@ all.equal(K1, K2) # should be equal
 ```
 
 #### Example 2
-**Simple scalar multiplication**. Let $a$ be a scalar and $\textbf{B}$ any matrix. Then, using the R's product operator (`*`) will multiply $\textbf{B}$ by the scalar. However, the `Hadamard()` function will produce an error because incompatibility. In this case, the `Kronecker()` function can be used.
+**Simple scalar multiplication**. Let $a$ be a scalar and $\textbf{B}$ any matrix. Then, using the R's product operator (`*`) will multiply $\textbf{B}$ by the scalar. However, the `Hadamard()` function will produce an error because incompatibility.
 
 ```{r eval=TRUE, echo=TRUE}
 a <- 10
 B <- matrix(1:6, ncol=2)
 
 a*B    # using the product operator
-try(Hadamard(a, B), silent=TRUE)[[1]] # Hadamard function produces an error
+try(Hadamard(a, B), silent=TRUE)[[1]] # using the Hadamard function
 ```
 
 Making the product is possible using `IDrowA` and `IDcolA` arguments (see next section)
 
 ```{r eval=TRUE, echo=TRUE}
 Hadamard(a, B, IDrowA=rep(1,nrow(B)), IDcolA=rep(1,ncol(B)))
+```
+
+In this scalar-matrix case, an easier alternative will be using a Kronecker product, see `help(Kronecker)`
+
+```{r eval=TRUE, echo=TRUE}
+Kronecker(a, B)
 ```
 
 ### Hadamard with incompatible matrices

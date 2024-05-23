@@ -417,8 +417,7 @@ all.equal(K1, K2) # should be equal</code></pre>
 <p><strong>Simple scalar multiplication</strong>. Let <span class="math inline">\(a\)</span> be a scalar and <span class="math inline">\(\textbf{B}\)</span> any matrix. Then, using the
 R’s product operator (<code>*</code>) will multiply <span class="math inline">\(\textbf{B}\)</span> by the scalar. However, the
 <code>Hadamard()</code> function will produce an error because
-incompatibility. In this case, the <code>Kronecker()</code> function can
-be used.</p>
+incompatibility.</p>
 <pre class="r"><code>a &lt;- 10
 B &lt;- matrix(1:6, ncol=2)
 
@@ -427,11 +426,18 @@ a*B    # using the product operator</code></pre>
 ## [1,]   10   40
 ## [2,]   20   50
 ## [3,]   30   60</code></pre>
-<pre class="r"><code>try(Hadamard(a, B), silent=TRUE)[[1]] # Hadamard function produces an error</code></pre>
+<pre class="r"><code>try(Hadamard(a, B), silent=TRUE)[[1]] # using the Hadamard function</code></pre>
 <pre><code>## [1] &quot;Error in Hadamard(a, B) : \n  No compatibility. Provide either matrices with equal number of rows\n  or &#39;IDrowA&#39; and/or &#39;IDrowB&#39; vectors of the same length\n&quot;</code></pre>
 <p>Making the product is possible using <code>IDrowA</code> and
 <code>IDcolA</code> arguments (see next section)</p>
 <pre class="r"><code>Hadamard(a, B, IDrowA=rep(1,nrow(B)), IDcolA=rep(1,ncol(B)))</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]   10   40
+## [2,]   20   50
+## [3,]   30   60</code></pre>
+<p>In this scalar-matrix case, an easier alternative will be using a
+Kronecker product, see <code>help(Kronecker)</code></p>
+<pre class="r"><code>Kronecker(a, B)</code></pre>
 <pre><code>##      [,1] [,2]
 ## [1,]   10   40
 ## [2,]   20   50
@@ -551,13 +557,13 @@ B &lt;- matrix(rnorm(30), ncol=5)
 K &lt;- Hadamard(A, B)
 c(K=pryr::address(K), A=pryr::address(A))</code></pre>
 <pre><code>##                K                A 
-## &quot;0x7fbf204afe60&quot; &quot;0x7fbf204a6fa0&quot;</code></pre>
+## &quot;0x7f9df27aee30&quot; &quot;0x7f9df27bb0a0&quot;</code></pre>
 <p>The argument <code>inplace</code> can be used to store the output at
 the same address as the input:</p>
 <pre class="r"><code>A &lt;- Hadamard(A, B, inplace=TRUE)
 c(A=pryr::address(A))  # output address remain unchanged</code></pre>
 <pre><code>##                A 
-## &quot;0x7fbf204a6fa0&quot;</code></pre>
+## &quot;0x7f9df27bb0a0&quot;</code></pre>
 <pre class="r"><code>all.equal(K, A)        # contains the desired result </code></pre>
 <pre><code>## [1] TRUE</code></pre>
 </div>
