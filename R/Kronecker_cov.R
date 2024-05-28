@@ -47,11 +47,13 @@ Kronecker_cov <- function(Sigma = 1, K, Theta, swap = FALSE,
   }
 
   if(inplace){
-    if(!(dmS[1]==1L) | !(is.null(rows)&is.null(cols))){
-      stop("Parameter 'inplace' can be TRUE only when 'Sigma' and 'Theta' are scalars ",
-           "and 'rows' and 'cols' are NULL")
+    inplace <- ifelse(dmK[1] == 1L,1,ifelse(dmS[1]==1L,2,0))
+    if(!(inplace>0) | !(is.null(rows)&is.null(cols))){
+      stop("'inplace' calculation can be only applied when either 'Sigma' (and 'Theta') or 'K' are not resized:",
+           "\n one of them is a scalar, and 'rows' and 'cols' are NULL")
     }
-    inplace <- 1L  # Inplace for K
+  }else{
+    inplace <- 0
   }
 
   # Obtaining Kronecker IDs

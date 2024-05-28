@@ -483,21 +483,21 @@ IDrowA &lt;- sample(seq(nrow(A)), nrow(B), replace=TRUE)
 IDcolA &lt;- sample(seq(ncol(A)), ncol(B), replace=TRUE)
 
 # Making the Hadamard product
-K1 &lt;- A[IDrowA,IDcolA]*B
-K2 &lt;- Hadamard(A, B, IDrowA=IDrowA, IDcolA=IDcolA)
+K1 &lt;- Hadamard(A, B, IDrowA=IDrowA, IDcolA=IDcolA)
+K2 &lt;- A[IDrowA,IDcolA]*B
 
 all.equal(K1, K2)</code></pre>
 <pre><code>## [1] TRUE</code></pre>
-<pre class="r"><code>dim(K2) == dim(B) # has the same dimension as B</code></pre>
-<pre><code>## [1] TRUE TRUE</code></pre>
 <p>Likewise, a Hadamard product between <span class="math inline">\(\textbf{A}\)</span> and a sub-matrix of <span class="math inline">\(\textbf{B}\)</span>, say
 <code>B[IDrowB,IDcolB]</code>, can be performed. For example,</p>
 <pre class="r"><code>IDrowB &lt;- sample(seq(nrow(B)), nrow(A), replace=TRUE)
 IDcolB &lt;- sample(seq(ncol(B)), ncol(A), replace=TRUE)
 
-K2 &lt;- Hadamard(A, B, IDrowB=IDrowB, IDcolB=IDcolB)
-dim(K2) == dim(A) </code></pre>
-<pre><code>## [1] TRUE TRUE</code></pre>
+K1 &lt;- Hadamard(A, B, IDrowB=IDrowB, IDcolB=IDcolB)
+K2 &lt;- A*B[IDrowB,IDcolB]
+
+all.equal(K1, K2)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
 </div>
 <div id="hadamard-between-two-sub-matrices" class="section level4">
 <h4>Hadamard between two sub-matrices</h4>
@@ -518,8 +518,8 @@ IDrowB &lt;- sample(seq(nrow(B)), dm[1], replace=TRUE)
 IDcolB &lt;- sample(seq(ncol(B)), dm[2], replace=TRUE)
 
 # Making the Hadamard product
-K1 &lt;- A[IDrowA,IDcolA]*B[IDrowB,IDcolB]
-K2 &lt;- Hadamard(A, B, IDrowA=IDrowA, IDrowB=IDrowB, IDcolA=IDcolA, IDcolB=IDcolB)
+K1 &lt;- Hadamard(A, B, IDrowA=IDrowA, IDrowB=IDrowB, IDcolA=IDcolA, IDcolB=IDcolB)
+K2 &lt;- A[IDrowA,IDcolA]*B[IDrowB,IDcolB]
 
 all.equal(K1, K2)</code></pre>
 <pre><code>## [1] TRUE</code></pre>
@@ -554,17 +554,19 @@ memory address than inputs:</p>
 <pre class="r"><code>A &lt;- matrix(rnorm(30), ncol=5)
 B &lt;- matrix(rnorm(30), ncol=5)
 
-K &lt;- Hadamard(A, B)
-c(K=pryr::address(K), A=pryr::address(A))</code></pre>
-<pre><code>##                K                A 
-## &quot;0x7f9df27aee30&quot; &quot;0x7f9df27bb0a0&quot;</code></pre>
+K1 &lt;- A[]                     # copy of A to be used as input
+add  &lt;- pryr::address(K1)     # address of K on entry
+K1 &lt;- Hadamard(K1, B)
+pryr::address(K1) == add      # on exit, K was moved to a different address</code></pre>
+<pre><code>## [1] FALSE</code></pre>
 <p>The argument <code>inplace</code> can be used to store the output at
 the same address as the input:</p>
-<pre class="r"><code>A &lt;- Hadamard(A, B, inplace=TRUE)
-c(A=pryr::address(A))  # output address remain unchanged</code></pre>
-<pre><code>##                A 
-## &quot;0x7f9df27bb0a0&quot;</code></pre>
-<pre class="r"><code>all.equal(K, A)        # contains the desired result </code></pre>
+<pre class="r"><code>K2 = A[]   
+add  = pryr::address(K2)
+K2 &lt;- Hadamard(K2, B, inplace=TRUE)
+pryr::address(K2) == add     # on exit, K remains at the same address</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>all.equal(K1, K2)       </code></pre>
 <pre><code>## [1] TRUE</code></pre>
 </div>
 <div id="making-dimension-names" class="section level4">

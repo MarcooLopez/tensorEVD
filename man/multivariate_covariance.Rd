@@ -120,62 +120,78 @@ and then calculates and adds accordingly only the non-zero entries of the second
 \examples{
   require(tensorEVD)
   
-  # Random matrix witn n subjects in rows and p features in columns
-  n = 20;  p = 5
-  X = matrix(rnorm(n*p), ncol=p)
+  # Generate rectangular some covariance matrices 
+  n = 30;  p = 10
   
-  # Variance matrix among rows/columns
-  K = tcrossprod(X)      # for rows
-  Sigma = crossprod(X)   # for columns
-  Theta = crossprod(matrix(rnorm(p*p), ncol=p))
-  dim(K)      # n x n matrix
-  dim(Sigma)  # p x p matrix
-  dim(Theta)  # p x p matrix
+  K = crossprod(matrix(rnorm(n*p), ncol=n))      # n x n matrix 
+  Sigma = crossprod(matrix(rnorm(n*p), ncol=p))  # p x p matrix  
+  Theta = crossprod(matrix(rnorm(n*p), ncol=p))  # p x p matrix
   
   # ==============================================
   # Kronecker covariance
   # ==============================================
-  G = Kronecker_cov(Sigma, K, Theta = Theta)
+  G1 = Kronecker_cov(Sigma, K, Theta = Theta)
 
   # it must equal to:
-  I0 = diag(n)    # diagonal matrix of dimension n
-  G0 = Kronecker(Sigma, K) + Kronecker(Theta, I0)
-  all.equal(G,G0)
+  D = diag(n)    # diagonal matrix of dimension n
+  G2 = Kronecker(Sigma, K) + Kronecker(Theta, D)
+  all.equal(G1,G2)
   
-  # Swapping the order of the matrices
-  G = Kronecker_cov(Sigma, K, Theta, swap = TRUE)
+  # (b) Swapping the order of the matrices
+  G1 = Kronecker_cov(Sigma, K, Theta, swap = TRUE)
 
   # in this case the kronecker is swapped:
-  G0 = Kronecker(K, Sigma) + Kronecker(I0, Theta)
-  all.equal(G,G0)
+  G2 = Kronecker(K, Sigma) + Kronecker(D, Theta)
+  all.equal(G1,G2)
   \donttest{
-  # ==============================================
-  # Extra: Selecting specific entries of the output
-  n = 150;  p = 120
-  X = matrix(rnorm(n*p), ncol=p)
-  K = tcrossprod(X)      
-  Sigma = crossprod(X)   
-  Theta = crossprod(matrix(rnorm(p*p), ncol=p))
-  
+  # (c) Selecting specific entries of the output
   # We want only some rows and columns
   rows = c(1,3,5)
   cols = c(10,30,50)
-  G = Kronecker_cov(Sigma, K, Theta, rows=rows, cols=cols)
+  G1 = Kronecker_cov(Sigma, K, Theta, rows=rows, cols=cols)
 
-  # this is preferable instead of:
-  # G0 = (Kronecker(Sigma, K) + Kronecker(Theta, diag(n)))[rows,cols]
-  # all.equal(G,G0)
+  # this can be preferable instead of:
+  G2 = (Kronecker(Sigma, K) + Kronecker(Theta, D))[rows,cols]
+  all.equal(G1,G2)
+  
+  # (d) Inplace calculation
+  # overwrite the output at the same address as the input:
+  G1 = K[]                     # copy of K to be used as input
+  add  = pryr::address(G1)     # address of G on entry
+  G1 = Kronecker_cov(Sigma=0.5, G1, Theta=1.5)
+  pryr::address(G1) == add     # on exit, G was moved to a different address
+  
+  G2 = K[]   
+  add  = pryr::address(G2) 
+  G2 = Kronecker_cov(Sigma=0.5, G2, Theta=1.5, inplace=TRUE)
+  pryr::address(G2) == add     # on exit, G remains at the same address
+  all.equal(G1,G2)
   }
   # ==============================================
   # Hadamard covariance
   # ==============================================
-  IDS = sample(1:p, 500, replace=TRUE)
-  IDK = sample(1:n, 500, replace=TRUE)
+  # Define IDs for a Hadamard of size m x m
+  m = 1000
+  IDS = sample(1:p, m, replace=TRUE)
+  IDK = sample(1:n, m, replace=TRUE)
   
-  G = Hadamard_cov(Sigma, K, Theta, IDS=IDS, IDK=IDK)
+  G1 = Hadamard_cov(Sigma, K, Theta, IDS=IDS, IDK=IDK)
   
   # it must equal to:
-  I0 = diag(n)    # diagonal matrix of dimension n
-  G0 = Sigma[IDS,IDS]*K[IDK,IDK] + Theta[IDS,IDS]*I0[IDK,IDK]
-  all.equal(G,G0)
+  G2 = Sigma[IDS,IDS]*K[IDK,IDK] + Theta[IDS,IDS]*D[IDK,IDK]
+  all.equal(G1,G2)
+  \donttest{
+  # (b) Inplace calculation
+  # overwrite the output at the same address as the input:
+  G1 = K[]                     # copy of K to be used as input
+  add  = pryr::address(G1)     # address of G on entry
+  G1 = Hadamard_cov(Sigma=0.5, G1, Theta=1.5, IDS=rep(1,n))
+  pryr::address(G1) == add     # on exit, G was moved to a different address
+  
+  G2 = K[]   
+  add  = pryr::address(G2)
+  G2 = Hadamard_cov(Sigma=0.5, G2, Theta=1.5, IDS=rep(1,n), inplace=TRUE)
+  pryr::address(G2) == add     # on exit, G remains at the same address
+  all.equal(G1,G2)
+  }
 }

@@ -111,7 +111,6 @@ cols <- sample(seq(dm[2]), 0.3*dm[2])
 K1 <- Kronecker(A, B)[rows,cols]
 K2 <- Kronecker(A, B, rows=rows, cols=cols)
 
-dim(K1)   # small size
 all.equal(K1, K2)
 ```
 
@@ -133,16 +132,20 @@ Usually, assigning an output to an object will occupy a different memory address
 
 ```{r eval=TRUE, echo=TRUE}
 B <- rnorm(1) # B is a scalar
-K <- Kronecker(A, B)
-c(K=pryr::address(K), A=pryr::address(A))
+K1 = A[]                     # copy of A to be used as input
+add  = pryr::address(K1)     # address of K on entry
+K1 = Kronecker(K1, B)
+pryr::address(K1) == add     # on exit, K was moved to a different address
 ```
 
 The parameter `inplace` can be used to overwrite the output at the same address as the input:
 
 ```{r eval=TRUE, echo=TRUE}
-A <- Kronecker(A, B, inplace=TRUE)
-c(A=pryr::address(A))  # output address remain unchanged
-all.equal(K, A)        # contains the desired result
+K2 = A[]   
+add  = pryr::address(K2)
+K2 = Kronecker(K2, B, inplace=TRUE)
+pryr::address(K2) == add     # on exit, K remains at the same address
+all.equal(K1, K2)
 ```
 
 #### Making dimension names

@@ -147,11 +147,17 @@ capitalize <- function(string){
 }
 
 .onAttach <- function(libname, pkgname) {
+  addchar <- function(n, char = " ")paste(rep(char,n), collapse="")
+
+  tt1 <- paste0("Loaded '",pkgname,"' R-package. Version ",
+                utils::packageVersion(pkgname)," (",utils::packageDate(pkgname),")")
+  tt2 <- "Authors: Lopez-Cruz M, Perez-Rodriguez P, & de los Campos G"
+
   packageStartupMessage("
-  |=======================================================================|
-  | Loaded '",pkgname,"' R-package. Version ", utils::packageVersion(pkgname),"
-  | Authors: Lopez-Cruz M, Perez-Rodriguez P, & de los Campos G
-  |=======================================================================|
+  |",addchar(70,"="),"|
+  | ",tt1,addchar(70-nchar(tt1)-1," "),"|
+  | ",tt2,addchar(70-nchar(tt2)-1," "),"|
+  |",addchar(70,"="),"|
   ")
 
   tmp <- utils::old.packages(repos="https://cloud.r-project.org")

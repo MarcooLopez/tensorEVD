@@ -96,9 +96,7 @@ The \code{tensorEVD} function derives each of these eigenvectors \ifelse{html}{\
   K1 = crossprod(matrix(rnorm(n1*(n1+10)), ncol=n1))
   K2 = crossprod(matrix(rnorm(n2*(n2+10)), ncol=n2))
 
-  # ==============================================
-  # Example 1. Full design (Kronecker product)
-  # ==============================================
+  # (a) Example 1. Full design (Kronecker product)
   ID1 = rep(seq(n1), each=n2)
   ID2 = rep(seq(n2), times=n1)
 
@@ -113,7 +111,7 @@ The \code{tensorEVD} function derives each of these eigenvectors \ifelse{html}{\
   all.equal(EVD0$values, EVD$values)
   all.equal(abs(EVD0$vectors), abs(EVD$vectors)) 
 
-  # If a proportion of variance explained is specified, 
+  # (b) If a proportion of variance explained is specified, 
   # only the eigenvectors needed to explain such proportion are derived
   alpha = 0.95
   EVD = tensorEVD(K1, K2, ID1, ID2, alpha=alpha)
@@ -124,9 +122,7 @@ The \code{tensorEVD} function derives each of these eigenvectors \ifelse{html}{\
   index = 1:which.min(abs(varexp-alpha))
   dim(EVD0$vectors[,index])
 
-  # ==============================================
-  # Example 2. Incomplete design (Hadamard product)
-  # ==============================================
+  # (c) Example 2. Incomplete design (Hadamard product)
   # Eigenvectors and eigenvalues are no longer equivalent
   n = n1*n2   # Sample size n
   ID1 = sample(seq(n1), n, replace=TRUE) # Randomly sample of ID1
@@ -152,7 +148,7 @@ The \code{tensorEVD} function derives each of these eigenvectors \ifelse{html}{\
   # a number of eigenvectors equal to the minimum between n and N
   # for the tensorEVD, this number is always N
 
-  # Sample size n being half of n1 x n2
+  # (d) Sample size n being half of n1 x n2
   n = n1*n2/2
   ID1 = sample(seq(n1), n, replace=TRUE)
   ID2 = sample(seq(n2), n, replace=TRUE)
@@ -163,7 +159,7 @@ The \code{tensorEVD} function derives each of these eigenvectors \ifelse{html}{\
 
   c(eigen=sum(EVD0$values>1E-10), tensorEVD=sum(EVD$values>1E-10))
 
-  # Sample size n being twice n1 x n2
+  # (e) Sample size n being twice n1 x n2
   n = n1*n2*2
   ID1 = sample(seq(n1), n, replace=TRUE)
   ID2 = sample(seq(n2), n, replace=TRUE)

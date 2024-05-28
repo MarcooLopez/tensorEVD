@@ -58,8 +58,10 @@ Hadamard_cov <- function(Sigma = 1, K, Theta, IDS, IDK,
     }
   }
 
+  fixedS <- FALSE
   if(missing(IDS)){
     indexS <- seq(0,dmS[1]-1)   # zero-based indices
+    fixedS <- TRUE
   }else{
     indexS <- match_ID(Sigma, IDS, check=TRUE)
     if(is.null(indexS)){
@@ -74,10 +76,10 @@ Hadamard_cov <- function(Sigma = 1, K, Theta, IDS, IDK,
   }
 
   if(inplace){
-    inplace <- ifelse(fixedK,1,0)
+    inplace <- ifelse(fixedS,1,ifelse(fixedK,2,0))
     if(inplace == 0){
-      stop("'inplace' calculation can be only applied when 'K' is not resized as per ",
-           "the 'IDK' parameter")
+      stop("'inplace' calculation can be only applied when either 'Sigma' or 'K' are not resized as per ",
+           "the 'IDS' and 'IDK' parameters")
     }
   }else{
     inplace <- 0

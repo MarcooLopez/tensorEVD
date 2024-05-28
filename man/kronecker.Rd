@@ -60,29 +60,42 @@ The function computes this sub-matrix of the Kronecker product directly from \if
 \examples{
   require(tensorEVD)
   
-  # Kronecker product of 2 vectors
+  # (a) Kronecker product of 2 vectors
   A = rnorm(3)
   B = rnorm(2) 
-  (K = Kronecker(A, B))
+  (K1 = Kronecker(A, B))
   # it must equal when using from the R-base package:
-  (K0 = kronecker(A, B))
+  (K2 = kronecker(A, B))
   
-  # Kronecker product of 2 matrices
+  # (b) Kronecker product of 2 matrices
   A = matrix(rnorm(12), ncol=3)
   B = matrix(rnorm(4), ncol=2)
-  K = Kronecker(A, B)
+  K1 = Kronecker(A, B)
   # (it must equal (but faster) to:)
-  K0 = kronecker(A, B)
-  all.equal(K,K0)
+  K2 = kronecker(A, B)
+  all.equal(K1,K2)
   \donttest{
-  # Subsetting rows/columns from the Kronecker
+  # (c) Subsetting rows/columns from the Kronecker
   A = matrix(rnorm(100*150), ncol=150)
   B = matrix(rnorm(100*120), ncol=120)
   rows = c(1,3,5,7)
   cols = c(10,20,30,50)
-  K = Kronecker(A, B, rows=rows, cols=cols)
+  K1 = Kronecker(A, B, rows=rows, cols=cols)
   # (it must equal (but faster) to:)
-  K0 = Kronecker(A, B)[rows,cols]
-  all.equal(K,K0)
+  K2 = Kronecker(A, B)[rows,cols]
+  all.equal(K1,K2)
+  
+  # (d) Inplace calculation
+  # overwrite the output at the same address as the input:
+  K1 = A[]                     # copy of A to be used as input
+  add  = pryr::address(K1)     # address of K on entry
+  K1 = Kronecker(K1, B=0.5)
+  pryr::address(K1) == add     # on exit, K was moved to a different address
+  
+  K2 = A[]   
+  add  = pryr::address(K2)
+  K2 = Kronecker(K2, B=0.5, inplace=TRUE)
+  pryr::address(K2) == add     # on exit, K remains at the same address
+  all.equal(K1,K2)
   }
 }

@@ -70,51 +70,59 @@ matrices.
 \examples{
   require(tensorEVD)
   
-  # ==============================================
-  # Example 1. Indexing using integers
-  # ==============================================
+  # (a) Example 1. Indexing using row/column names
   # Generate rectangular matrices A (nrowA x ncolA) and B (nrowB x ncolB)
   nA = c(10,15)
   nB = c(12,8)
   A = matrix(rnorm(nA[1]*nA[2]), nrow=nA[1])
   B = matrix(rnorm(nB[1]*nB[2]), nrow=nB[1])
+  dimnames(A) = list(paste0("row",seq(nA[1])), paste0("col",seq(nA[2])))
+  dimnames(B) = list(paste0("row",seq(nB[1])), paste0("col",seq(nB[2])))
   
-  # Define size of the Hadamard n1 x n2
-  n1 = 1000
-  n2 = 500
-  IDrowA = sample(seq(nA[1]), n1, replace=TRUE)
-  IDrowB = sample(seq(nB[1]), n1, replace=TRUE)
-  IDcolA = sample(seq(nA[2]), n2, replace=TRUE)
-  IDcolB = sample(seq(nB[2]), n2, replace=TRUE)
+  # Define IDs for a Hadamard of size n1 x n2
+  n = c(1000,500)
+  IDrowA = sample(rownames(A), n[1], replace=TRUE)
+  IDrowB = sample(rownames(B), n[1], replace=TRUE)
+  IDcolA = sample(colnames(A), n[2], replace=TRUE)
+  IDcolB = sample(colnames(B), n[2], replace=TRUE)
   
-  # Direct hadamard product
-  K1 = A[IDrowA,IDcolA]*B[IDrowB,IDcolB]
+  K1 = Hadamard(A, B, IDrowA, IDrowB, IDcolA, IDcolB, make.dimnames=TRUE)
   
-  # Using 'Hadamard' function
-  K2 = Hadamard(A, B, IDrowA, IDrowB, IDcolA, IDcolB)
+  # (it must equal to:)
+  K2 = A[IDrowA,IDcolA]*B[IDrowB,IDcolB]
+  dimnames(K2) = list(paste0(IDrowA,":",IDrowB), paste0(IDcolA,":",IDcolB))
+  all.equal(K1,K2)
   
-  all.equal(K1,K2)  # They should be equal
-  
-  # ==============================================
-  # Example 2. Indexing using row/column names
-  # ==============================================
+  # (b) Example 2. Indexing using integers
   # Generate squared symmetric matrices A and B 
   nA = 20
   nB = 15
-  A = tcrossprod(matrix(rnorm(nA*nA), nrow=nA, dimnames=list(paste0("id",seq(nA)))))
-  B = tcrossprod(matrix(rnorm(nB*nB), nrow=nB, dimnames=list(paste0("id",seq(nB)))))
+  A = tcrossprod(matrix(rnorm(nA*nA), nrow=nA))
+  B = tcrossprod(matrix(rnorm(nB*nB), nrow=nB))
   
-  # Define size of the Hadamard n x n
+  # Define IDs for a Hadamard of size n x n
   n = 1000
-  IDA = sample(rownames(A), n, replace=TRUE)
-  IDB = sample(rownames(B), n, replace=TRUE)
+  IDA = sample(seq(nA), n, replace=TRUE)
+  IDB = sample(seq(nB), n, replace=TRUE)
   
-  # Direct hadamard product
-  K1 = A[IDA,IDA]*B[IDB,IDB]
-  dimnames(K1) = list(paste0(IDA,":",IDB), paste0(IDA,":",IDB))
+  K1 = Hadamard(A, B, IDA, IDB)
   
-  # Using 'Hadamard' function
-  K2 = Hadamard(A, B, IDA, IDB, make.dimnames=TRUE)
+  # (it must equal to:)
+  K2 = A[IDA,IDA]*B[IDB,IDB]
+  all.equal(K1,K2)
   
-  all.equal(K1,K2)  # They should be equal
+  # (c) Inplace calculation
+  # overwrite the output at the same address as the input:
+  IDB = sample(seq(nB), nA, replace=TRUE)
+  
+  K1 = A[]                     # copy of A to be used as input
+  add  = pryr::address(K1)     # address of K on entry
+  K1 = Hadamard(K1, B, IDrowB=IDB)
+  pryr::address(K1) == add     # on exit, K was moved to a different address
+  
+  K2 = A[]   
+  add  = pryr::address(K2)
+  K2 = Hadamard(K2, B, IDrowB=IDB, inplace=TRUE)
+  pryr::address(K2) == add     # on exit, K remains at the same address
+  all.equal(K1,K2)
 }

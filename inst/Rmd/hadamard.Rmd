@@ -99,11 +99,10 @@ IDrowA <- sample(seq(nrow(A)), nrow(B), replace=TRUE)
 IDcolA <- sample(seq(ncol(A)), ncol(B), replace=TRUE)
 
 # Making the Hadamard product
-K1 <- A[IDrowA,IDcolA]*B
-K2 <- Hadamard(A, B, IDrowA=IDrowA, IDcolA=IDcolA)
+K1 <- Hadamard(A, B, IDrowA=IDrowA, IDcolA=IDcolA)
+K2 <- A[IDrowA,IDcolA]*B
 
 all.equal(K1, K2)
-dim(K2) == dim(B) # has the same dimension as B
 ```
 
 Likewise, a Hadamard product between $\textbf{A}$ and a sub-matrix of $\textbf{B}$, say `B[IDrowB,IDcolB]`, can be performed. For example,
@@ -112,8 +111,10 @@ Likewise, a Hadamard product between $\textbf{A}$ and a sub-matrix of $\textbf{B
 IDrowB <- sample(seq(nrow(B)), nrow(A), replace=TRUE)
 IDcolB <- sample(seq(ncol(B)), ncol(A), replace=TRUE)
 
-K2 <- Hadamard(A, B, IDrowB=IDrowB, IDcolB=IDcolB)
-dim(K2) == dim(A) 
+K1 <- Hadamard(A, B, IDrowB=IDrowB, IDcolB=IDcolB)
+K2 <- A*B[IDrowB,IDcolB]
+
+all.equal(K1, K2)
 ```
 
 #### Hadamard between two sub-matrices
@@ -132,8 +133,8 @@ IDrowB <- sample(seq(nrow(B)), dm[1], replace=TRUE)
 IDcolB <- sample(seq(ncol(B)), dm[2], replace=TRUE)
 
 # Making the Hadamard product
-K1 <- A[IDrowA,IDcolA]*B[IDrowB,IDcolB]
-K2 <- Hadamard(A, B, IDrowA=IDrowA, IDrowB=IDrowB, IDcolA=IDcolA, IDcolB=IDcolB)
+K1 <- Hadamard(A, B, IDrowA=IDrowA, IDrowB=IDrowB, IDcolA=IDcolA, IDcolB=IDcolB)
+K2 <- A[IDrowA,IDcolA]*B[IDrowB,IDcolB]
 
 all.equal(K1, K2)
 ```
@@ -162,16 +163,20 @@ Usually, assigning an output to an object will occupy a different memory address
 A <- matrix(rnorm(30), ncol=5)
 B <- matrix(rnorm(30), ncol=5)
 
-K <- Hadamard(A, B)
-c(K=pryr::address(K), A=pryr::address(A))
+K1 <- A[]                     # copy of A to be used as input
+add  <- pryr::address(K1)     # address of K on entry
+K1 <- Hadamard(K1, B)
+pryr::address(K1) == add      # on exit, K was moved to a different address
 ```
 
 The argument `inplace` can be used to store the output at the same address as the input:
 
 ```{r eval=TRUE, echo=TRUE}
-A <- Hadamard(A, B, inplace=TRUE)
-c(A=pryr::address(A))  # output address remain unchanged
-all.equal(K, A)        # contains the desired result 
+K2 = A[]   
+add  = pryr::address(K2)
+K2 <- Hadamard(K2, B, inplace=TRUE)
+pryr::address(K2) == add     # on exit, K remains at the same address
+all.equal(K1, K2)       
 ```
 
 #### Making dimension names

@@ -528,9 +528,7 @@ cols &lt;- sample(seq(dm[2]), 0.3*dm[2])
 K1 &lt;- Kronecker(A, B)[rows,cols]
 K2 &lt;- Kronecker(A, B, rows=rows, cols=cols)
 
-dim(K1)   # small size</code></pre>
-<pre><code>## [1] 240 180</code></pre>
-<pre class="r"><code>all.equal(K1, K2)</code></pre>
+all.equal(K1, K2)</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 <div id="benchmark-1" class="section level4">
 <h4>Benchmark</h4>
@@ -557,17 +555,19 @@ the result on the memory occupied by <span class="math inline">\(\textbf{A}\)</s
 <p>Usually, assigning an output to an object will occupy a different
 memory address than inputs:</p>
 <pre class="r"><code>B &lt;- rnorm(1) # B is a scalar
-K &lt;- Kronecker(A, B)
-c(K=pryr::address(K), A=pryr::address(A))</code></pre>
-<pre><code>##                K                A 
-## &quot;0x7fa6a5718200&quot; &quot;0x7fa6a8a7e200&quot;</code></pre>
+K1 = A[]                     # copy of A to be used as input
+add  = pryr::address(K1)     # address of K on entry
+K1 = Kronecker(K1, B)
+pryr::address(K1) == add     # on exit, K was moved to a different address</code></pre>
+<pre><code>## [1] FALSE</code></pre>
 <p>The parameter <code>inplace</code> can be used to overwrite the
 output at the same address as the input:</p>
-<pre class="r"><code>A &lt;- Kronecker(A, B, inplace=TRUE)
-c(A=pryr::address(A))  # output address remain unchanged</code></pre>
-<pre><code>##                A 
-## &quot;0x7fa6a8a7e200&quot;</code></pre>
-<pre class="r"><code>all.equal(K, A)        # contains the desired result</code></pre>
+<pre class="r"><code>K2 = A[]   
+add  = pryr::address(K2)
+K2 = Kronecker(K2, B, inplace=TRUE)
+pryr::address(K2) == add     # on exit, K remains at the same address</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>all.equal(K1, K2)</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 </div>
 <div id="making-dimension-names" class="section level4">
