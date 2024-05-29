@@ -157,10 +157,6 @@ SEXP R_tensor_evd(SEXP n_, SEXP n1_, SEXP nPC1_, SEXP n2_, SEXP nPC2_,
                    Rf_getAttrib(V2_, R_DimNamesSymbol),
                    dimnames_);
       Rf_setAttrib(vectors_, R_DimNamesSymbol, dimnames_);
-      //setAttrib(vectors_, R_DimNamesSymbol,
-      //          get_dimnames(n,nPC,index1,index2,NULL,K1i,K2i,order,
-      //                       getAttrib(V1_, R_DimNamesSymbol),
-      //                       getAttrib(V2_, R_DimNamesSymbol)));
       nprotect++;
     }
 

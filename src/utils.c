@@ -46,7 +46,6 @@ void get_dimnames(int nrow, int ncol,
 {
   SEXP rownames_ = PROTECT(Rf_allocVector(STRSXP, nrow));
   SEXP colnames_ = PROTECT(Rf_allocVector(STRSXP, ncol));
-  //SEXP dimnames_ = PROTECT(Rf_allocVector(VECSXP, 2));
 
   int i, j;
   char *name1 = (char*)malloc(100*sizeof(char));
@@ -91,7 +90,6 @@ void get_dimnames(int nrow, int ncol,
   SET_VECTOR_ELT(dimnames_, 1, colnames_);
 
   UNPROTECT(2);
-  //return(dimnames_);
 }
 
 //==============================================================

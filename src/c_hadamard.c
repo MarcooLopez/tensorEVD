@@ -129,10 +129,6 @@ SEXP R_hadamard(SEXP nrowA_, SEXP ncolA_, SEXP A_,
                    Rf_getAttrib(B_, R_DimNamesSymbol),
                    dimnames_);
       Rf_setAttrib(out2_, R_DimNamesSymbol, dimnames_);
-      //setAttrib(out2_, R_DimNamesSymbol,
-      //          get_dimnames(nrow,ncol,irowA,irowB,NULL,icolA,icolB,NULL,
-      //                       getAttrib(A_, R_DimNamesSymbol),
-      //                       getAttrib(B_, R_DimNamesSymbol)));
       nprotect++;
     }
 
