@@ -16,8 +16,7 @@ SEXP R_tensor_evd(SEXP n_, SEXP n1_, SEXP nPC1_, SEXP n2_, SEXP nPC2_,
                   SEXP alpha_,
                   SEXP makedimnames_, SEXP verbose_)
 {
-    double *V2, *V1, *d1, *d2;
-    int *index1, *index2;
+    int nprotect = 10;
 
     int n = INTEGER_VALUE(n_);
     int n1 = INTEGER_VALUE(n1_);
@@ -31,22 +30,22 @@ SEXP R_tensor_evd(SEXP n_, SEXP n1_, SEXP nPC1_, SEXP n2_, SEXP nPC2_,
     double eps = DBL_EPSILON*100;
 
     PROTECT(V1_ = AS_NUMERIC(V1_));
-    V1 = NUMERIC_POINTER(V1_);
+    double *V1 = NUMERIC_POINTER(V1_);
 
     PROTECT(V2_ = AS_NUMERIC(V2_));
-    V2 = NUMERIC_POINTER(V2_);
+    double *V2 = NUMERIC_POINTER(V2_);
 
     PROTECT(d1_ = AS_NUMERIC(d1_));
-    d1 = NUMERIC_POINTER(d1_);
+    double *d1 = NUMERIC_POINTER(d1_);
 
     PROTECT(d2_ = AS_NUMERIC(d2_));
-    d2 = NUMERIC_POINTER(d2_);
+    double *d2 = NUMERIC_POINTER(d2_);
 
     PROTECT(index1_ = AS_INTEGER(index1_));
-    index1 = INTEGER_POINTER(index1_);
+    int *index1 = INTEGER_POINTER(index1_);
 
     PROTECT(index2_ = AS_INTEGER(index2_));
-    index2 = INTEGER_POINTER(index2_);
+    int *index2 = INTEGER_POINTER(index2_);
 
     int nmap = nPC1*nPC2;
     double *d = (double *) R_alloc(nmap, sizeof(double));
@@ -132,10 +131,10 @@ SEXP R_tensor_evd(SEXP n_, SEXP n1_, SEXP nPC1_, SEXP n2_, SEXP nPC2_,
     // the Tensor (provided by indexK1 and indexK2) will enter in the dot product
     // Output objects
     SEXP vectors_ = PROTECT(Rf_allocMatrix(REALSXP, n, nPC));
-    double *vectors=NUMERIC_POINTER(vectors_);
+    double *vectors = NUMERIC_POINTER(vectors_);
 
     SEXP values_ = PROTECT(Rf_allocVector(REALSXP, nPC));
-    double *values=NUMERIC_POINTER(values_);
+    double *values = NUMERIC_POINTER(values_);
 
     double w;
     for(i=0; i<nPC; i++)  // loop over the rows of the (ordered) MAP
@@ -152,10 +151,17 @@ SEXP R_tensor_evd(SEXP n_, SEXP n1_, SEXP nPC1_, SEXP n2_, SEXP nPC2_,
 
     // Set dimnames for vectors
     if(makedimnames){
-      setAttrib(vectors_, R_DimNamesSymbol,
-                get_dimnames(n,nPC,index1,index2,NULL,K1i,K2i,order,
-                             getAttrib(V1_, R_DimNamesSymbol),
-                             getAttrib(V2_, R_DimNamesSymbol)));
+      SEXP dimnames_ = PROTECT(Rf_allocVector(VECSXP, 2));
+      get_dimnames(n, nPC, index1, index2, NULL, K1i, K2i, order,
+                   Rf_getAttrib(V1_, R_DimNamesSymbol),
+                   Rf_getAttrib(V2_, R_DimNamesSymbol),
+                   dimnames_);
+      Rf_setAttrib(vectors_, R_DimNamesSymbol, dimnames_);
+      //setAttrib(vectors_, R_DimNamesSymbol,
+      //          get_dimnames(n,nPC,index1,index2,NULL,K1i,K2i,order,
+      //                       getAttrib(V1_, R_DimNamesSymbol),
+      //                       getAttrib(V2_, R_DimNamesSymbol)));
+      nprotect++;
     }
 
     SEXP list_ = PROTECT(Rf_allocVector(VECSXP, 3));
@@ -168,9 +174,9 @@ SEXP R_tensor_evd(SEXP n_, SEXP n1_, SEXP nPC1_, SEXP n2_, SEXP nPC2_,
     SET_VECTOR_ELT(names_, 0, mkChar("values"));
     SET_VECTOR_ELT(names_, 1, mkChar("vectors"));
     SET_VECTOR_ELT(names_, 2, mkChar("totalVar"));
-    setAttrib(list_, R_NamesSymbol, names_);
+    Rf_setAttrib(list_, R_NamesSymbol, names_);
 
-    UNPROTECT(10);
+    UNPROTECT(nprotect);
 
     return(list_);
 }

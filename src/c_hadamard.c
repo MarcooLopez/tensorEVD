@@ -36,16 +36,15 @@ SEXP R_hadamard(SEXP nrowA_, SEXP ncolA_, SEXP A_,
     double *B = NUMERIC_POINTER(B_);
 
     int nrow = Rf_length(irowA_);
-    int ncol;
-
-    int *irowA, *icolA, *irowB, *icolB;
 
     PROTECT(irowA_ = AS_INTEGER(irowA_));
-    irowA = INTEGER_POINTER(irowA_);
+    int *irowA = INTEGER_POINTER(irowA_);
 
     PROTECT(irowB_=AS_INTEGER(irowB_));
-    irowB = INTEGER_POINTER(irowB_);
+    int *irowB = INTEGER_POINTER(irowB_);
 
+    int ncol;
+    int *icolA, *icolB;
     if(Rf_length(icolA_) == 0){
       icolA = irowA;
       ncol = nrow;
@@ -124,10 +123,17 @@ SEXP R_hadamard(SEXP nrowA_, SEXP ncolA_, SEXP A_,
 
     if(ismatrix && makedimnames && (inplace==0)){
       // Rprintf(" Making dimnames ...\n");
-      setAttrib(out2_, R_DimNamesSymbol,
-                get_dimnames(nrow,ncol,irowA,irowB,NULL,icolA,icolB,NULL,
-                             getAttrib(A_, R_DimNamesSymbol),
-                             getAttrib(B_, R_DimNamesSymbol)));
+      SEXP dimnames_ = PROTECT(Rf_allocVector(VECSXP, 2));
+      get_dimnames(nrow, ncol, irowA, irowB, NULL, icolA, icolB, NULL,
+                   Rf_getAttrib(A_, R_DimNamesSymbol),
+                   Rf_getAttrib(B_, R_DimNamesSymbol),
+                   dimnames_);
+      Rf_setAttrib(out2_, R_DimNamesSymbol, dimnames_);
+      //setAttrib(out2_, R_DimNamesSymbol,
+      //          get_dimnames(nrow,ncol,irowA,irowB,NULL,icolA,icolB,NULL,
+      //                       getAttrib(A_, R_DimNamesSymbol),
+      //                       getAttrib(B_, R_DimNamesSymbol)));
+      nprotect++;
     }
 
     UNPROTECT(nprotect);

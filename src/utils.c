@@ -36,15 +36,17 @@ void append_to_sorted_vector(int k, double *values, int *order)
 
 //==============================================================
 //==============================================================
-SEXP get_dimnames(int nrow, int ncol,
+void get_dimnames(int nrow, int ncol,
                   int *irow1, int *irow2, int *irow,
                   int *icol1, int *icol2, int *icol,
                   SEXP dimnames1_,  // optional dimnames from inputs
-                  SEXP dimnames2_)
+                  SEXP dimnames2_,
+                  SEXP dimnames_    // pointer to output
+                  )
 {
   SEXP rownames_ = PROTECT(Rf_allocVector(STRSXP, nrow));
   SEXP colnames_ = PROTECT(Rf_allocVector(STRSXP, ncol));
-  SEXP dimnames_ = PROTECT(Rf_allocVector(VECSXP, 2));
+  //SEXP dimnames_ = PROTECT(Rf_allocVector(VECSXP, 2));
 
   int i, j;
   char *name1 = (char*)malloc(100*sizeof(char));
@@ -88,8 +90,8 @@ SEXP get_dimnames(int nrow, int ncol,
   SET_VECTOR_ELT(dimnames_, 0, rownames_);
   SET_VECTOR_ELT(dimnames_, 1, colnames_);
 
-  UNPROTECT(3);
-  return(dimnames_);
+  UNPROTECT(2);
+  //return(dimnames_);
 }
 
 //==============================================================
@@ -185,7 +187,7 @@ SEXP R_kronecker_index(SEXP nrowA_, SEXP ncolA_,
 
     icolB_ = PROTECT(Rf_allocVector(INTSXP, ncol));
     icolB = INTEGER_POINTER(icolB_);
-    nprotect += 2;
+    nprotect+=2;
 
     if(swap){   // kronecker(B,A)
       get_kronecker_index(ncolB, ncolA, icolB, icolA, nicol, icol, start);
@@ -206,7 +208,7 @@ SEXP R_kronecker_index(SEXP nrowA_, SEXP ncolA_,
   SET_VECTOR_ELT(names_, 1, mkChar("icolA"));
   SET_VECTOR_ELT(names_, 2, mkChar("irowB"));
   SET_VECTOR_ELT(names_, 3, mkChar("icolB"));
-  setAttrib(list_, R_NamesSymbol, names_);
+  Rf_setAttrib(list_, R_NamesSymbol, names_);
 
   UNPROTECT(nprotect);
 
