@@ -113,8 +113,7 @@ SEXP R_hadamard(SEXP nrowA_, SEXP ncolA_, SEXP A_,
       size_t i;
       for(j=0; j<ncol; j++){
         for(i=0; i<nrow; i++){
-          if(irowB[i] == icolB[j]){ //if(irowA[i] == icolA[j]){
-            //out2[nrow*j + i] += C[nrowB*(long long)icolB[j] + (long long)irowB[i]];
+          if(irowB[i] == icolB[j]){ 
             out2[nrow*j + i] += C[nrowA*(long long)icolA[j] + (long long)irowA[i]];
           }
         }
