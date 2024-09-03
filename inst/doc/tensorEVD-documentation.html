@@ -300,7 +300,7 @@ div.tocify {
 <div id="r-scripts" class="section level4">
 <h4>R-scripts</h4>
 <p>Folder <code>code</code> contains the R-scripts to implement the sequence of analyses detailed in the next sections and can be downloaded from this <a href="https://github.com/MarcooLopez/tensorEVD/tree/main/misc/code">link</a>.</p>
-<p>The R-scripts were run on the MSU high-performance computing center (HPCC) (<a href="https://icer.msu.edu/hpcc/hardware" class="uri">https://icer.msu.edu/hpcc/hardware</a>) as a batch job script. The header of the scripts contains the shebang line <code>#!/usr/bin/env Rscript</code> in the first line followed by job requirements (e.g., memory, number of CPUs, run time) that are specified using the <code>SLURM</code> scheduler by adding the prefix <code>#SBATCH</code> at the beginning of each request instruction line, for example</p>
+<p>The R-scripts were run on the MSU high-performance computing center (HPCC) (<a href="https://docs.icer.msu.edu/Cluster_Resources/" class="uri">https://docs.icer.msu.edu/Cluster_Resources/</a>) as a batch job script. The header of the scripts contains the shebang line <code>#!/usr/bin/env Rscript</code> in the first line followed by job requirements (e.g., memory, number of CPUs, run time) that are specified using the <code>SLURM</code> scheduler by adding the prefix <code>#SBATCH</code> at the beginning of each request instruction line, for example</p>
 <pre><code>#!/usr/bin/env Rscript
 #SBATCH --time=03:59:00
 #SBATCH --cpus-per-task=1

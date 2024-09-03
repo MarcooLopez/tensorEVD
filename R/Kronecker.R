@@ -3,7 +3,7 @@
 # Kronecker product between matrices A and B
 #====================================================================
 # rows <- cols <- NULL; drop = TRUE; inplace=TRUE
-Kronecker <- function(A, B, rows = NULL, cols = NULL,
+Kronecker <- function(A, B, rows = NULL, cols = NULL, a = 1,
                       make.dimnames = FALSE, drop = TRUE,
                       inplace = FALSE)
 {
@@ -17,6 +17,10 @@ Kronecker <- function(A, B, rows = NULL, cols = NULL,
 
   dmA <- dim(A)
   dmB <- dim(B)
+
+  if(!is.scalar(a)){
+    stop("'a' must be a scalar")
+  }
 
   if(inplace){
     inplace <- ifelse((dmB[1]*dmB[2])==1,1,ifelse((dmA[1]*dmA[2])==1,2,0))
@@ -35,7 +39,7 @@ Kronecker <- function(A, B, rows = NULL, cols = NULL,
   stopifnot(length(res$icolA) == length(res$icolB))
 
   #dyn.load("c_hadamard.so")
-  return(.Call('R_hadamard', dmA[1], dmA[2], A, dmB[1], dmB[2], B, NULL,
+  return(.Call('R_hadamard', a, dmA[1], dmA[2], A, dmB[1], dmB[2], B, NULL,
                              res$irowA, res$icolA, res$irowB, res$icolB,
                              NULL, drop, make.dimnames, inplace))
   #dyn.unload("c_hadamard.so")

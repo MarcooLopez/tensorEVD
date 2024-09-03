@@ -3,10 +3,10 @@
 # Hadamard product between matrices A and B
 #====================================================================
 # IDcolA = NULL; IDcolB = NULL; drop <- TRUE; make.dimnames <- inplace <- FALSE
-Hadamard <- function(A, B, IDrowA, IDrowB,
-                     IDcolA = NULL, IDcolB = NULL,
-                     a = 1, make.dimnames = FALSE,
-                     drop = TRUE, inplace = FALSE)
+Sum <- function(a = 1, A, b = 1, B, IDrowA, IDrowB,
+                IDcolA = NULL, IDcolB = NULL,
+                make.dimnames = FALSE,
+                drop = TRUE, inplace = FALSE)
 {
 
   if((length(dim(A)) != 2L)){
@@ -20,6 +20,10 @@ Hadamard <- function(A, B, IDrowA, IDrowB,
 
   if(!is.scalar(a)){
     stop("'a' must be a scalar")
+  }
+
+  if(!is.scalar(b)){
+    stop("'b' must be a scalar")
   }
 
   # Match rows IDs
@@ -98,7 +102,7 @@ Hadamard <- function(A, B, IDrowA, IDrowB,
   }
 
   #dyn.load("c_hadamard.so")
-  return(.Call('R_hadamard', a, dmA[1], dmA[2], A, dmB[1], dmB[2], B, NULL,
+  return(.Call('R_sumvec', a, dmA[1], dmA[2], A, b, dmB[1], dmB[2], B,
                              irowA, icolA, irowB, icolB,
                              NULL, drop, make.dimnames, inplace))
   #dyn.unload("c_hadamard.so")

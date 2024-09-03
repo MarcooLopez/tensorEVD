@@ -83,7 +83,7 @@ Folder `source` contains the phenotypic (file `PHENO.csv`), SNPs (file `GENO.csv
 
 Folder `code` contains the R-scripts to implement the sequence of analyses detailed in the next sections and can be downloaded from this [link](https://github.com/MarcooLopez/tensorEVD/tree/main/misc/code).
 
-The R-scripts were run on the MSU high-performance computing center (HPCC) (https://icer.msu.edu/hpcc/hardware) as a batch job script. The header of the scripts contains the shebang line `#!/usr/bin/env Rscript` in the first line followed by job requirements (e.g., memory, number of CPUs, run time) that are specified using the `SLURM` scheduler by adding the prefix `#SBATCH` at the beginning of each request instruction line, for example
+The R-scripts were run on the MSU high-performance computing center (HPCC) (https://docs.icer.msu.edu/Cluster_Resources/) as a batch job script. The header of the scripts contains the shebang line `#!/usr/bin/env Rscript` in the first line followed by job requirements (e.g., memory, number of CPUs, run time) that are specified using the `SLURM` scheduler by adding the prefix `#SBATCH` at the beginning of each request instruction line, for example
 
 ```{}
 #!/usr/bin/env Rscript

@@ -61,8 +61,9 @@ Kronecker_cov <- function(Sigma = 1, K, Theta, swap = FALSE,
   stopifnot(length(res$irowA) == length(res$irowB))
   stopifnot(length(res$icolA) == length(res$icolB))
 
+  a <- 1
   #dyn.load("c_hadamard.so")
-  return(.Call('R_hadamard', dmS[1], dmS[2], Sigma, dmK[1], dmK[2], K, Theta,
+  return(.Call('R_hadamard', a, dmS[1], dmS[2], Sigma, dmK[1], dmK[2], K, Theta,
                              res$irowA, res$icolA, res$irowB, res$icolB,
                              NULL, drop, FALSE, inplace))
   #dyn.unload("c_hadamard.so")

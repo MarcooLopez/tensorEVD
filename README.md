@@ -2,14 +2,14 @@
 
 [![CRAN status](https://www.r-pkg.org/badges/version/tensorEVD?color=green)](https://CRAN.R-project.org/package=tensorEVD)
 [![CRAN checks](https://badges.cranchecks.info/worst/tensorEVD.svg)](https://cran.r-project.org/web/checks/check_results_tensorEVD.html)
-[![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/tensorEVD)](http://www.r-pkg.org/pkg/tensorEVD)
-[![Downloads/month](http://cranlogs.r-pkg.org/badges/tensorEVD?color=blue)](http://www.r-pkg.org/pkg/tensorEVD)
+[![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/tensorEVD)](https://www.r-pkg.org/pkg/tensorEVD)
+[![Downloads/month](http://cranlogs.r-pkg.org/badges/tensorEVD?color=blue)](https://www.r-pkg.org/pkg/tensorEVD)
 
 The 'tensorEVD' R-package offers tools for calculation and factorization of high-dimensional tensor products (Hadamard and Kronecker) that are formed by smaller matrices.
 
 **Funding**: [NSF PGRP-Tech Grant 2035472](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2035472&HistoricalAwards=false).
 
-*Last update: May 22, 2024*
+*Last update: Sep 02, 2024*
 
 ## Installation
 Installation of 'tensorEVD' package requires an R-version &ge; 3.6.0.

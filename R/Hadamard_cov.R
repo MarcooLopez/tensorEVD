@@ -85,8 +85,9 @@ Hadamard_cov <- function(Sigma = 1, K, Theta, IDS, IDK,
     inplace <- 0
   }
 
+  a <- 1
   #dyn.load("c_hadamard.so")
-  return(.Call('R_hadamard', dmS[1], dmS[2], Sigma, dmK[1], dmK[2], K, Theta,
+  return(.Call('R_hadamard', a, dmS[1], dmS[2], Sigma, dmK[1], dmK[2], K, Theta,
                              indexS, indexS, indexK, indexK,
                              NULL, drop, FALSE, inplace))
   #dyn.unload("c_hadamard.so")

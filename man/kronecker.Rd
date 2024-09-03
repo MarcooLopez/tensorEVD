@@ -3,7 +3,7 @@
 \alias{Kronecker}
 \title{Kronecker product}
 \usage{
-Kronecker(A, B, rows = NULL, cols = NULL, 
+Kronecker(A, B, rows = NULL, cols = NULL, a = 1,
           make.dimnames = FALSE, drop = TRUE,
           inplace = FALSE) 
 
@@ -16,6 +16,8 @@ Kronecker(A, B, rows = NULL, cols = NULL,
 \item{rows}{(integer) Index which rows of the Kronecker are to be returned. They must range from 1 to \code{nrow(A)*nrow(B)}. Default \code{rows=NULL} will return all the rows}
 
 \item{cols}{(integer) Index which columns of the Kronecker are to be returned. They must range from 1 to \code{ncol(A)*ncol(B)}. Default \code{cols=NULL} return all the columns}
+
+\item{a}{(numeric) A constant to multiply the resulting Kronecker product by}
 
 \item{drop}{Either \code{TRUE} or \code{FALSE} to whether return a uni-dimensional vector when output is a matrix with either 1 row or 1 column as per the \code{rows} and \code{cols} arguments}
 

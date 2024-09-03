@@ -214,6 +214,43 @@ SEXP R_kronecker_index(SEXP nrowA_, SEXP ncolA_,
 }
 
 //====================================================================
+// Weighted sum between two vectors:
+//       dz[j] <- a * dx[ix[j]] + b * dy[iy[j]],    j = 1,2,...,n
+//
+//   [in]  a: (double) A factor to multiply the first array by
+//   [in]  n: (int) Number of elements in input vector(s) ix and iy
+//   [in]  dx: double precision array of dimension <= max(ix)+1
+//   [in]  ix: integer array (zero-based) of dimension n
+//   [in]  b: (double) A factor to multiply the second array by
+//   [in]  dy: double precision array of dimension <= max(iy)+1
+//   [in]  ix: integer array (zero-based) of dimension n
+//   [out] dz: double precision array of dimension at least n
+//====================================================================
+void sum_set(int n, double *a, double *dx, int *ix, double *b, double *dy, int *iy, double *dz)
+{
+    int m, i;
+
+    /* Clean-up loop so remaining vector length is a multiple of 5.  */
+    m = n % 5;
+    if(m != 0){
+       for(i=0; i<m; i++){
+          dz[i] = a[0] * dx[ix[i]] + b[0] * dy[iy[i]];
+       }
+       if(n < 5){
+          return;
+       }
+    }
+    for(i=m; i<n; i+=5)
+    {
+       dz[i] = a[0] * dx[ix[i]] + b[0] * dy[iy[i]];
+       dz[i+1] = a[0] * dx[ix[i+1]] + b[0] * dy[iy[i+1]];
+       dz[i+2] = a[0] * dx[ix[i+2]] + b[0] * dy[iy[i+2]];
+       dz[i+3] = a[0] * dx[ix[i+3]] + b[0] * dy[iy[i+3]];
+       dz[i+4] = a[0] * dx[ix[i+4]] + b[0] * dy[iy[i+4]];
+    }
+}
+
+//====================================================================
 // Hadamard product between two vectors:
 //       dz[j] <- a * dx[ix[j]] * dy[iy[j]],    j = 1,2,...,n
 //

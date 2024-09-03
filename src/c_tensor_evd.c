@@ -152,12 +152,12 @@ SEXP R_tensor_evd(SEXP n_, SEXP n1_, SEXP nPC1_, SEXP n2_, SEXP nPC2_,
     // Set dimnames for vectors
     if(makedimnames){
       SEXP dimnames_ = PROTECT(Rf_allocVector(VECSXP, 2));
+      SEXP dimnamesV1_ = PROTECT(Rf_getAttrib(V1_, R_DimNamesSymbol));
+      SEXP dimnamesV2_ = PROTECT(Rf_getAttrib(V2_, R_DimNamesSymbol));
       get_dimnames(n, nPC, index1, index2, NULL, K1i, K2i, order,
-                   Rf_getAttrib(V1_, R_DimNamesSymbol),
-                   Rf_getAttrib(V2_, R_DimNamesSymbol),
-                   dimnames_);
+                   dimnamesV1_, dimnamesV2_, dimnames_);
       Rf_setAttrib(vectors_, R_DimNamesSymbol, dimnames_);
-      nprotect++;
+      nprotect += 3;
     }
 
     SEXP list_ = PROTECT(Rf_allocVector(VECSXP, 3));

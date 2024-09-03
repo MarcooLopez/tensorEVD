@@ -15,6 +15,8 @@ void get_pos(int nA, int nB, int k, int *i, int *j, int start);
 
 void get_kronecker_index(int nA, int nB, int *iA, int *iB, int ni, int *index, int start);
 
+void sum_set(int n, double *a, double *dx, int *ix, double *b, double *dy, int *iy, double *dz);
+
 void hadam_set(int n, double *a, double *dx, int *ix, double *dy, int *iy, double *dz);
 
 double dnorm_hadam_set(int n, double *dx, int *ix, double *dy, int *iy);
