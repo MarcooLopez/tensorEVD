@@ -101,12 +101,12 @@ SEXP R_sumvec(SEXP a_, SEXP nrowA_, SEXP ncolA_, SEXP A_,
     if(ismatrix && makedimnames && (inplace==0)){
       // Rprintf(" Making dimnames ...\n");
       SEXP dimnames_ = PROTECT(Rf_allocVector(VECSXP, 2));
+      SEXP dimnamesA_ = PROTECT(Rf_getAttrib(A_, R_DimNamesSymbol));
+      SEXP dimnamesB_ = PROTECT(Rf_getAttrib(B_, R_DimNamesSymbol));
       get_dimnames(nrow, ncol, irowA, irowB, NULL, icolA, icolB, NULL,
-                   Rf_getAttrib(A_, R_DimNamesSymbol),
-                   Rf_getAttrib(B_, R_DimNamesSymbol),
-                   dimnames_);
+                   dimnamesA_, dimnamesB_, dimnames_);
       Rf_setAttrib(out2_, R_DimNamesSymbol, dimnames_);
-      nprotect++;
+      nprotect += 3;
     }
 
     UNPROTECT(nprotect);
