@@ -5,6 +5,7 @@ PKG_CFLAGS = -I.
 R_SOURCES = \
       c_sum.o \
 			c_tensor_evd.o \
+      c_tensor_vec_x.o \
 			c_hadamard.o \
 			init.o \
 			utils.o

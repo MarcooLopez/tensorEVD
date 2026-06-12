@@ -1,6 +1,66 @@
 #include "tensorEVD.h"
 
 //==============================================================
+// Get the number of eigenvectors (nPC) that explain a certain percentage
+// alpha x 100% of variance.
+//    N:     Number of eigenvalues
+//    order: Indexing of ordered eigenvalues in descending order
+//    [out] nd:       Number of positive eigenvalues
+//    [out] nPC:      Number of eigenvalues that explain alpha*100% of variance
+//    [out] totalvar: Total variance
+//==============================================================
+void get_nu(int N, double *d, int *order, double dmin, double alpha,
+            int *nd, double *cumvar, int *nPC, double *totalvar)
+{
+  // Rprintf(" Get the number of PC that accumulated certain variance ...\n");
+  long long i;
+  double eps = DBL_EPSILON*10;
+
+  int flag_alpha = alpha > 0;
+
+  // Get the total variance
+  if(flag_alpha){
+    totalvar[0] = 0.0;
+    for(i=0; i<N; i++){
+      totalvar[0] += d[i];
+    }
+  }
+
+  // Loop over the map to get the cumulative variance and drop small eigenvalues
+  double cumvar0 = 0;
+  double mindif = fabs(cumvar0-alpha);
+  nd[0] = N;          // N positive tensor eigenvalues
+
+  for(i=0; i<N; i++){
+    if(d[order[i]] < dmin){
+      nd[0] = (int) i;
+      break;   // Exit the loop
+    }else{
+      if(flag_alpha)
+      {
+        cumvar[i] = cumvar0 + d[order[i]]/totalvar[0];
+        if(fabs(cumvar[i]-alpha) < mindif){
+          mindif = fabs(cumvar[i]-alpha);
+        }
+        cumvar0 = cumvar[i];
+      }
+    }
+  }
+
+  // Loop over the positive ones to get the minimum
+  if(flag_alpha)
+  {
+    nPC[0] = 0;
+    for(i=0; i<nd[0]; i++){
+      if(fabs(fabs(cumvar[i]-alpha)-mindif) <= eps){
+        nPC[0] = (int) i + 1;
+        break;
+      }
+    }
+  }
+}
+
+//==============================================================
 // Return sorted (descendant order) indices for a vector of
 // numeric values. The ordered position of the element k,
 // values[k], is found by comparing with the (ordered) values
@@ -13,24 +73,25 @@
 // elements:
 //    order[0],...,order[j-1], k, order[j],...,order[k-1]
 //==============================================================
-void append_to_sorted_vector(int k, double *values, int *order)
+void append_to_order_vector(int k, double *values, int *order)
 {
   int j;
 
   if(k==0){
     order[0] = k;
   }else{
-    j=0;
-    while(values[order[j]]>values[k]){
+    j = 0;
+    while(values[k] <= values[order[j]]){
       j++;
       if(j == k){
         break;
       }
     }
     if(j < k){
+      // memmove(void *dest_str, const void *src_str, size_t numBytes)
       memmove(order + j+1, order + j, (k-j)*sizeof(int));
     }
-    order[j]=k;
+    order[j] = k;
   }
 }
 
@@ -251,18 +312,26 @@ void sum_set(int n, double *a, double *dx, int *ix, double *b, double *dy, int *
 }
 
 //====================================================================
-// Hadamard product between two vectors:
-//       dz[j] <- a * dx[ix[j]] * dy[iy[j]],    j = 1,2,...,n
+// Operations between two indexed vectors dx[ix] and dy[iy]:
 //
-//   [in]  a: (double) A factor to multiply the hadamard by
-//   [in]  n: (int) Number of elements in input vector(s) ix and iy
-//   [in]  dx: double precision array of dimension <= max(ix)+1
-//   [in]  ix: integer array (zero-based) of dimension n
-//   [in]  dy: double precision array of dimension <= max(iy)+1
-//   [in]  ix: integer array (zero-based) of dimension n
-//   [out] dz: double precision array of dimension at least n
+//    daxty:     dz[j] <- a * dx[ix[j]] * dy[iy[j]],      for j = 1,...,n
+//
+//    daxtypz:   dz[j] <- a*dx[ix[j]]*dy[iy[j]] + dz[j],  for j = 1,...,n
+//
+//    ddot3:     sum( dx[ix[j]] * dy[iy[j]] * dz[j] ),    over j = 1,...,n
+//
+//    dnorm_xty: sqrt(sum( (dx[ix[j]] * dy[iy[j]])^2 )),  over j = 1,...,n
+//
+//   [in]      a: (double) A factor to multiply the hadamard by
+//   [in]      n: (int) Number of elements in input vector(s) ix and iy
+//   [in]     dx: double precision array of dimension <= max(ix)+1
+//   [in]     ix: integer array (zero-based) of dimension n
+//   [in]     dy: double precision array of dimension <= max(iy)+1
+//   [in]     ix: integer array (zero-based) of dimension n
+//   [in,out] dz: double precision array of dimension at least n.
+//                For daxty [out], for daxtypz [in,out]
 //====================================================================
-void hadam_set(int n, double *a, double *dx, int *ix, double *dy, int *iy, double *dz)
+void daxty_set(int n, double *a, double *dx, int *ix, double *dy, int *iy, double *dz)
 {
     int m, i;
 
@@ -278,7 +347,7 @@ void hadam_set(int n, double *a, double *dx, int *ix, double *dy, int *iy, doubl
     }
     for(i=m; i<n; i+=5)
     {
-       dz[i] = a[0] * dx[ix[i]] * dy[iy[i]];
+       dz[i]   = a[0] * dx[ix[i]]   * dy[iy[i]];
        dz[i+1] = a[0] * dx[ix[i+1]] * dy[iy[i+1]];
        dz[i+2] = a[0] * dx[ix[i+2]] * dy[iy[i+2]];
        dz[i+3] = a[0] * dx[ix[i+3]] * dy[iy[i+3]];
@@ -287,13 +356,64 @@ void hadam_set(int n, double *a, double *dx, int *ix, double *dy, int *iy, doubl
 }
 
 //====================================================================
+
+void daxtypz_set(int n, double *a, double *dx, int *ix, double *dy, int *iy, double *dz)
+{
+    int m, i;
+
+    /* Clean-up loop so remaining vector length is a multiple of 5.  */
+    m = n % 5;
+    if(m != 0){
+       for(i=0; i<m; i++){
+          dz[i] = dz[i] + a[0] * dx[ix[i]] * dy[iy[i]];
+       }
+       if(n < 5){
+          return;
+       }
+    }
+    for(i=m; i<n; i+=5)
+    {
+       dz[i]   = dz[i]   + a[0] * dx[ix[i]]   * dy[iy[i]];
+       dz[i+1] = dz[i+1] + a[0] * dx[ix[i+1]] * dy[iy[i+1]];
+       dz[i+2] = dz[i+2] + a[0] * dx[ix[i+2]] * dy[iy[i+2]];
+       dz[i+3] = dz[i+3] + a[0] * dx[ix[i+3]] * dy[iy[i+3]];
+       dz[i+4] = dz[i+4] + a[0] * dx[ix[i+4]] * dy[iy[i+4]];
+    }
+}
+
+//====================================================================
+
+double ddot3_set(int n, double *dx, int *ix, double *dy, int *iy, double *dz)
+{
+    int m, i;
+    double out = 0;
+
+    /* Clean-up loop so remaining vector length is a multiple of 5.  */
+    m = n % 5;
+    if(m != 0){
+       for(i=0; i<m; i++){
+          out += dx[ix[i]] * dy[iy[i]] * dz[i];
+       }
+       if(n < 5){
+          return(out);
+       }
+    }
+    for(i=m; i<n; i+=5){
+       out += dx[ix[i]] * dy[iy[i]] * dz[i] +
+              dx[ix[i+1]] * dy[iy[i+1]] * dz[i+1] +
+              dx[ix[i+2]] * dy[iy[i+2]] * dz[i+2] +
+              dx[ix[i+3]] * dy[iy[i+3]] * dz[i+3] +
+              dx[ix[i+4]] * dy[iy[i+4]] * dz[i+4];
+    }
+    return(out);
+}
+
+//====================================================================
 // Euclidean norm of a vector dz that is formed as a Hadamard product
 // between two subset vectors:
-//       dz[j] <- dx[ix[j]] * dy[iy[j]],    j = 1,2,...,n
-// Then the norm is:
-//       sqrt(dz[1]^2 + ... + dz[n]^2)
+//       sqrt(sum( (dx[ix[j]] * dy[iy[j]])^2 )),  over j = 1,...,n
 //====================================================================
-double dnorm_hadam_set(int n, double *dx, int *ix, double *dy, int *iy)
+double dnorm_xty_set(int n, double *dx, int *ix, double *dy, int *iy)
 {
     int m, i;
     double out = 0.0;

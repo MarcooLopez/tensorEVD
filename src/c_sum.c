@@ -6,8 +6,8 @@
 // A is of dimensions: nrowA,ncolA
 // B is of dimensions: nrowB,ncolB
 //==============================================================
-SEXP R_sumvec(SEXP a_, SEXP nrowA_, SEXP ncolA_, SEXP A_,
-              SEXP b_, SEXP nrowB_, SEXP ncolB_, SEXP B_,
+SEXP R_sumvec(SEXP a_, SEXP A_,
+              SEXP b_, SEXP B_,
               SEXP irowA_, SEXP icolA_,
               SEXP irowB_, SEXP icolB_,
               SEXP out_, SEXP drop_,
@@ -15,9 +15,9 @@ SEXP R_sumvec(SEXP a_, SEXP nrowA_, SEXP ncolA_, SEXP A_,
 {
     int nprotect = 4;
 
-    int nrowA = INTEGER_VALUE(nrowA_);
+    int nrowA = Rf_nrows(A_);
     //int ncolA = INTEGER_VALUE(ncolA_);
-    int nrowB = INTEGER_VALUE(nrowB_);
+    int nrowB = Rf_nrows(B_);
     //int ncolB = INTEGER_VALUE(ncolB_);
     double a = NUMERIC_VALUE(a_);
     double b = NUMERIC_VALUE(b_);

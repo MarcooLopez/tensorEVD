@@ -13,16 +13,18 @@
 */
 
 /* .Call calls */
-extern SEXP R_sumvec(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP R_hadamard(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP R_sumvec(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP R_hadamard(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP R_kronecker_index(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP R_tensor_evd(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP R_tensor_evd(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP R_tensor_vec_x(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"R_sumvec",          (DL_FUNC) &R_sumvec,          16},
-    {"R_hadamard",        (DL_FUNC) &R_hadamard,        16},
+    {"R_sumvec",          (DL_FUNC) &R_sumvec,          12},
+    {"R_hadamard",        (DL_FUNC) &R_hadamard,        12},
     {"R_kronecker_index", (DL_FUNC) &R_kronecker_index,  8},
-    {"R_tensor_evd",      (DL_FUNC) &R_tensor_evd,      15},
+    {"R_tensor_evd",      (DL_FUNC) &R_tensor_evd,      13},
+    {"R_tensor_vec_x",    (DL_FUNC) &R_tensor_vec_x,    8},
     {NULL, NULL, 0}
 };
 

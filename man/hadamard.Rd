@@ -66,7 +66,7 @@ can be obtained as \code{B[IDrowB,IDcolB]}, where \code{IDrowB} and \code{IDcolB
 
 The function computes the Hadamard product directly from \ifelse{html}{\out{<b>A</b>}}{\eqn{\textbf{A}}{A}} and \ifelse{html}{\out{<b>B</b>}}{\eqn{\textbf{B}}{B}} without forming \ifelse{html}{\out{<b>R</b><sub>1</sub> <b>A</b> <b>C'</b><sub>1</sub>}}{\eqn{\textbf{R}_{1}\textbf{A}\textbf{C}'_{1}}{R1 A C1'}} or 
 \ifelse{html}{\out{<b>R</b><sub>2</sub> <b>B</b> <b>C'</b><sub>2</sub>}}{\eqn{\textbf{R}_{2}\textbf{B}\textbf{C}'_{2}}{R2 B C2'}}
-matrices. The result can be multiplied by a constant \ifelse{html}{\out{<i>a</i>}}{\eqn{a}{a}}.
+matrices. The result is multiplied by a constant \ifelse{html}{\out{<i>a</i>}}{\eqn{a}{a}}.
 
 }
 \examples{
@@ -117,14 +117,16 @@ matrices. The result can be multiplied by a constant \ifelse{html}{\out{<i>a</i>
   # overwrite the output at the same address as the input:
   IDB = sample(seq(nB), nA, replace=TRUE)
   
-  K1 = A[]                     # copy of A to be used as input
-  add  = pryr::address(K1)     # address of K on entry
+  if(requireNamespace("rlang", quietly = TRUE)){
+  K1 = A[]                           # copy of A to be used as input
+  addr  = rlang::obj_address(K1)     # address of K on entry
   K1 = Hadamard(K1, B, IDrowB=IDB)
-  pryr::address(K1) == add     # on exit, K was moved to a different address
+  rlang::obj_address(K1) == addr     # on exit, K was moved to a different address
   
   K2 = A[]   
-  add  = pryr::address(K2)
+  addr = rlang::obj_address(K2)
   K2 = Hadamard(K2, B, IDrowB=IDB, inplace=TRUE)
-  pryr::address(K2) == add     # on exit, K remains at the same address
+  rlang::obj_address(K2) == addr     # on exit, K remains at the same address
   all.equal(K1,K2)
+  }
 }

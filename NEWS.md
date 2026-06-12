@@ -1,3 +1,9 @@
+### Version 0.1.5 (2026-06-08)
+
+- Argument 'nu' can be passed to the 'tensorEVD' function to define the number of eigenvectors to be derived
+- Argument 'norm' can be passed to the 'tensorEVD' function to scale the Kronecker product of eigenvalues before sorting. If not provided, it will be internally calculated
+- Argument 'order' can be passed to the 'tensorEVD' function to sort the Kronecker product of eigenvalues after proper scaling
+
 ### Version 0.1.4 (2024-09-02)
 
 - New function 'Sum' to efficiently compute a weighted sum of two matrices
@@ -5,7 +11,7 @@
 
 ### Version 0.1.3 (2024-05-28)
 
-- Bugs fixed: Inplace calculation (parameter 'inplace=TRUE') in Hadamard_cov and Kronecker_cov functions caused an error in v0.1.2
+- Bugs fixed: Inplace calculation (parameter 'inplace=TRUE') in 'Hadamard_cov' and 'Kronecker_cov' functions caused an error in v0.1.2
 - Warnings from CRAN checks with 'rchk' addressed
 
 ### Version 0.1.2 (2024-05-22)

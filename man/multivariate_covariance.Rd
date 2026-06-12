@@ -156,16 +156,19 @@ and then calculates and adds accordingly only the non-zero entries of the second
   
   # (d) Inplace calculation
   # overwrite the output at the same address as the input:
-  G1 = K[]                     # copy of K to be used as input
-  add  = pryr::address(G1)     # address of G on entry
+  
+  if(requireNamespace("rlang", quietly = TRUE)){
+  G1 = K[]                          # copy of K to be used as input
+  addr = rlang::obj_address(G1)    # address of G on entry
   G1 = Kronecker_cov(Sigma=0.5, G1, Theta=1.5)
-  pryr::address(G1) == add     # on exit, G was moved to a different address
+  rlang::obj_address(G1) == addr    # on exit, G was moved to a different address
   
   G2 = K[]   
-  add  = pryr::address(G2) 
+  addr = rlang::obj_address(G2) 
   G2 = Kronecker_cov(Sigma=0.5, G2, Theta=1.5, inplace=TRUE)
-  pryr::address(G2) == add     # on exit, G remains at the same address
+  rlang::obj_address(G2) == addr    # on exit, G remains at the same address
   all.equal(G1,G2)
+  }
   }
   # ==============================================
   # Hadamard covariance
@@ -183,15 +186,18 @@ and then calculates and adds accordingly only the non-zero entries of the second
   \donttest{
   # (b) Inplace calculation
   # overwrite the output at the same address as the input:
-  G1 = K[]                     # copy of K to be used as input
-  add  = pryr::address(G1)     # address of G on entry
+  
+  if(requireNamespace("rlang", quietly = TRUE)){
+  G1 = K[]                          # copy of K to be used as input
+  addr = rlang::obj_address(G1)    # address of G on entry
   G1 = Hadamard_cov(Sigma=0.5, G1, Theta=1.5, IDS=rep(1,n))
-  pryr::address(G1) == add     # on exit, G was moved to a different address
+  rlang::obj_address(G1) == addr    # on exit, G was moved to a different address
   
   G2 = K[]   
-  add  = pryr::address(G2)
+  addr = rlang::obj_address(G2)
   G2 = Hadamard_cov(Sigma=0.5, G2, Theta=1.5, IDS=rep(1,n), inplace=TRUE)
-  pryr::address(G2) == add     # on exit, G remains at the same address
+  rlang::obj_address(G2) == addr    # on exit, G remains at the same address
   all.equal(G1,G2)
+  }
   }
 }

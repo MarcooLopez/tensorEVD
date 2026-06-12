@@ -146,8 +146,11 @@ capitalize <- function(string){
   string
 }
 
-.onAttach <- function(libname, pkgname) {
-  addchar <- function(n, char = " ")paste(rep(char,n), collapse="")
+#====================================================================
+#====================================================================
+
+.onAttach <- function(libname, pkgname){
+  addchar <- function(n, char = " ") paste(rep(char,n), collapse="")
 
   tt1 <- paste0("Loaded '",pkgname,"' R-package. Version ",
                 utils::packageVersion(pkgname)," (",utils::packageDate(pkgname),")")

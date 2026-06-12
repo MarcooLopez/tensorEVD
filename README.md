@@ -9,7 +9,7 @@ The 'tensorEVD' R-package offers tools for calculation and factorization of high
 
 **Funding**: [NSF PGRP-Tech Grant 2035472](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2035472&HistoricalAwards=false).
 
-*Last update: Sep 02, 2024*
+*Last update: Jun 12, 2026*
 
 ## Installation
 Installation of 'tensorEVD' package requires an R-version &ge; 3.6.0.

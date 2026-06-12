@@ -39,7 +39,7 @@ Kronecker <- function(A, B, rows = NULL, cols = NULL, a = 1,
   stopifnot(length(res$icolA) == length(res$icolB))
 
   #dyn.load("c_hadamard.so")
-  return(.Call('R_hadamard', a, dmA[1], dmA[2], A, dmB[1], dmB[2], B, NULL,
+  return(.Call('R_hadamard', a, A, B, NULL,
                              res$irowA, res$icolA, res$irowB, res$icolB,
                              NULL, drop, make.dimnames, inplace))
   #dyn.unload("c_hadamard.so")

@@ -102,8 +102,8 @@ Sum <- function(a = 1, A, b = 1, B, IDrowA, IDrowB,
   }
 
   #dyn.load("c_hadamard.so")
-  return(.Call('R_sumvec', a, dmA[1], dmA[2], A, b, dmB[1], dmB[2], B,
-                             irowA, icolA, irowB, icolB,
-                             NULL, drop, make.dimnames, inplace))
+  return(.Call('R_sumvec', a, A, b, B,
+                           irowA, icolA, irowB, icolB,
+                           NULL, drop, make.dimnames, inplace))
   #dyn.unload("c_hadamard.so")
 }

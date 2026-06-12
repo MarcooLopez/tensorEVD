@@ -89,15 +89,18 @@ The function computes this sub-matrix of the Kronecker product directly from \if
   
   # (d) Inplace calculation
   # overwrite the output at the same address as the input:
-  K1 = A[]                     # copy of A to be used as input
-  add  = pryr::address(K1)     # address of K on entry
+  
+  if(requireNamespace("rlang", quietly = TRUE)){
+  K1 = A[]                         # copy of A to be used as input
+  addr = rlang::obj_address(K1)   # address of K on entry
   K1 = Kronecker(K1, B=0.5)
-  pryr::address(K1) == add     # on exit, K was moved to a different address
+  rlang::obj_address(K1) == addr   # on exit, K was moved to a different address
   
   K2 = A[]   
-  add  = pryr::address(K2)
+  addr = rlang::obj_address(K2)
   K2 = Kronecker(K2, B=0.5, inplace=TRUE)
-  pryr::address(K2) == add     # on exit, K remains at the same address
+  rlang::obj_address(K2) == addr   # on exit, K remains at the same address
   all.equal(K1,K2)
+  }
   }
 }

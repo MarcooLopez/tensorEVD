@@ -17,8 +17,15 @@ void get_kronecker_index(int nA, int nB, int *iA, int *iB, int ni, int *index, i
 
 void sum_set(int n, double *a, double *dx, int *ix, double *b, double *dy, int *iy, double *dz);
 
-void hadam_set(int n, double *a, double *dx, int *ix, double *dy, int *iy, double *dz);
+void daxty_set(int n, double *a, double *dx, int *ix, double *dy, int *iy, double *dz);
 
-double dnorm_hadam_set(int n, double *dx, int *ix, double *dy, int *iy);
+void daxtypz_set(int n, double *a, double *dx, int *ix, double *dy, int *iy, double *dz);
 
-void append_to_sorted_vector(int k, double *values, int *order);
+double ddot3_set(int n, double *dx, int *ix, double *dy, int *iy, double *dz);
+
+double dnorm_xty_set(int n, double *dx, int *ix, double *dy, int *iy);
+
+void append_to_order_vector(int k, double *values, int *order);
+
+void get_nu(int N, double *d, int *order, double dmin, double alpha,
+            int *nd, double *cumvar, int *nPC, double *totalvar);

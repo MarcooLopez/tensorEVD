@@ -35,10 +35,10 @@ Sum(a = 1, A, b = 1, B, IDrowA, IDrowB,
 \item{inplace}{\code{TRUE} or \code{FALSE} to whether operate directly on one input matrix (\code{A} or \code{B}) when this is used as is (i.e., is not indexed; therefore, needs to be of appropiate dimensions) in the Hadamard. When \code{TRUE} the output will be overwritten on the same address occupied by the non-indexed matrix. Default \code{inplace=FALSE}}
 }
 \value{
-Returns a matrix containing the Hadamard product.
+Returns a matrix containing the weighted sum.
 }
 \description{
-Computes the Hadamard product between two matrices
+Computes the weighted sum between two matrices
 }
 \details{
 Computes the \ifelse{html}{\out{<i>m</i> &times; <i>n</i>}}{\eqn{m\times n}{m x n}} weighted sum matrix between matrices 
@@ -66,9 +66,9 @@ can be obtained as \code{B[IDrowB,IDcolB]}, where \code{IDrowB} and \code{IDcolB
 
 \ifelse{html}{\out{<p style='text-align:center;font-family:courier'>a*A[IDrowA,IDcolA] + b*B[IDrowB,IDcolB]</p>}}{\deqn{\code{a*A[IDrowA,IDcolA] + b*B[IDrowB,IDcolB]}}{a*A[IDrowA,IDcolA] + b*B[IDrowB,IDcolB]}}
 
-The function computes the Hadamard product directly from \ifelse{html}{\out{<b>A</b>}}{\eqn{\textbf{A}}{A}} and \ifelse{html}{\out{<b>B</b>}}{\eqn{\textbf{B}}{B}} without forming \ifelse{html}{\out{<b>R</b><sub>1</sub> <b>A</b> <b>C'</b><sub>1</sub>}}{\eqn{\textbf{R}_{1}\textbf{A}\textbf{C}'_{1}}{R1 A C1'}} or 
+The function computes the weighted sum directly from \ifelse{html}{\out{<b>A</b>}}{\eqn{\textbf{A}}{A}} and \ifelse{html}{\out{<b>B</b>}}{\eqn{\textbf{B}}{B}} without forming \ifelse{html}{\out{<b>R</b><sub>1</sub> <b>A</b> <b>C'</b><sub>1</sub>}}{\eqn{\textbf{R}_{1}\textbf{A}\textbf{C}'_{1}}{R1 A C1'}} or 
 \ifelse{html}{\out{<b>R</b><sub>2</sub> <b>B</b> <b>C'</b><sub>2</sub>}}{\eqn{\textbf{R}_{2}\textbf{B}\textbf{C}'_{2}}{R2 B C2'}}
-matrices. The result can be multiplied by a constant \ifelse{html}{\out{<i>a</i>}}{\eqn{a}{a}}.
+matrices. The sumands are pre-multiplied by constants \ifelse{html}{\out{<i>a</i>}}{\eqn{a}{a}} and \ifelse{html}{\out{<i>b</i>}}{\eqn{b}{b}} before summing.
 
 }
 \examples{

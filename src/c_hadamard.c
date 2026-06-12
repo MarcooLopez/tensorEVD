@@ -12,8 +12,7 @@
 // B and I are of the same dimensions
 //==============================================================
 SEXP R_hadamard(SEXP a_,
-                SEXP nrowA_, SEXP ncolA_, SEXP A_,
-                SEXP nrowB_, SEXP ncolB_, SEXP B_,
+                SEXP A_, SEXP B_,
                 SEXP C_,  // Optional matrix of the same dimension as A
                 SEXP irowA_, SEXP icolA_,
                 SEXP irowB_, SEXP icolB_,
@@ -22,22 +21,21 @@ SEXP R_hadamard(SEXP a_,
 {
     int nprotect = 4;
 
-    int nrowA = INTEGER_VALUE(nrowA_);
-    //int ncolA = INTEGER_VALUE(ncolA_);
-    int nrowB = INTEGER_VALUE(nrowB_);
-    //int ncolB = INTEGER_VALUE(ncolB_);
     double a = NUMERIC_VALUE(a_);
+    int nrowA = Rf_nrows(A_);
+    //int ncolA = INTEGER_VALUE(ncolA_);
+    int nrowB = Rf_nrows(B_);
+    //int ncolB = INTEGER_VALUE(ncolB_);
     int drop = asLogical(drop_);
     int makedimnames = asLogical(makedimnames_);
     int inplace = INTEGER_VALUE(inplace_);
+    int nrow = Rf_length(irowA_);
 
     PROTECT(A_ = AS_NUMERIC(A_));
     double *A = NUMERIC_POINTER(A_);
 
     PROTECT(B_ = AS_NUMERIC(B_));
     double *B = NUMERIC_POINTER(B_);
-
-    int nrow = Rf_length(irowA_);
 
     PROTECT(irowA_ = AS_INTEGER(irowA_));
     int *irowA = INTEGER_POINTER(irowA_);
@@ -101,7 +99,7 @@ SEXP R_hadamard(SEXP a_,
     // Rprintf(" Making the Hadamard product ...\n");
     size_t j;
     for(j=0; j<ncol; j++){
-      hadam_set(nrow, &a, A + (long long)nrowA*icolA[j], irowA, B + (long long)nrowB*icolB[j], irowB, out2 + nrow*j);
+      daxty_set(nrow, &a, A + (long long)nrowA*icolA[j], irowA, B + (long long)nrowB*icolB[j], irowB, out2 + nrow*j);
     }
 
     if(!Rf_isNull(C_)){

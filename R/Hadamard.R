@@ -98,7 +98,7 @@ Hadamard <- function(A, B, IDrowA, IDrowB,
   }
 
   #dyn.load("c_hadamard.so")
-  return(.Call('R_hadamard', a, dmA[1], dmA[2], A, dmB[1], dmB[2], B, NULL,
+  return(.Call('R_hadamard', a, A, B, NULL,
                              irowA, icolA, irowB, icolB,
                              NULL, drop, make.dimnames, inplace))
   #dyn.unload("c_hadamard.so")
