@@ -163,11 +163,11 @@ capitalize <- function(string){
   |",addchar(70,"="),"|
   ")
 
-  #tmp <- utils::old.packages(repos="https://cloud.r-project.org")
-  #if(!is.null(tmp)){
-  #  if(nrow(tmp)> 0 & pkgname%in%rownames(tmp)){
-  #    packageStartupMessage(" Note: New version ",tmp[pkgname,"ReposVer"],
-  #            " of this package is available on CRAN")
-  #  }
-  #}
+  tmp <- utils::old.packages(repos="https://cloud.r-project.org")
+  if(!is.null(tmp)){
+    if(nrow(tmp)> 0 & pkgname%in%rownames(tmp)){
+      packageStartupMessage(" Note: New version ",tmp[pkgname,"ReposVer"],
+              " of this package is available on CRAN")
+    }
+  }
 }
