@@ -152,8 +152,9 @@ capitalize <- function(string){
 .onAttach <- function(libname, pkgname){
   addchar <- function(n, char = " ") paste(rep(char,n), collapse="")
 
+  currentVer <- as.character(utils::packageVersion(pkgname))
   tt1 <- paste0("Loaded '",pkgname,"' R-package. Version ",
-                utils::packageVersion(pkgname)," (",utils::packageDate(pkgname),")")
+                currentVer," (",utils::packageDate(pkgname),")")
   tt2 <- "Authors: Lopez-Cruz M, Perez-Rodriguez P, & de los Campos G"
 
   packageStartupMessage("
@@ -163,9 +164,18 @@ capitalize <- function(string){
   |",addchar(70,"="),"|
   ")
 
-  tmp <- utils::old.packages(repos="https://cloud.r-project.org")
+  # Check for new version on CRAN
+  tmp <- utils::available.packages(repos="https://cloud.r-project.org")
+  if(ifelse(is.null(tmp),FALSE,pkgname%in%rownames(tmp))){
+    newVer <- as.character(tmp[pkgname,"Version"])
+    if(utils::compareVersion(newVer,currentVer) > 0){
+      packageStartupMessage(" Note: New version ",newVer,
+                            " of this package is available on CRAN")
+    }
+  }
+  #tmp <- utils::old.packages(repos="https://cloud.r-project.org")
   #if(!is.null(tmp)){
-  #  if(nrow(tmp)> 0 & pkgname%in%rownames(tmp) & "ReposVer"%in%colnames(tmp)){
+  #  if(nrow(tmp)>0 & pkgname%in%rownames(tmp) & "ReposVer"%in%colnames(tmp)){
   #    packageStartupMessage(" Note: New version ",tmp[pkgname,"ReposVer"],
   #           " of this package is available on CRAN")
   #  }
