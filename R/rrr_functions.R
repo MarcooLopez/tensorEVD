@@ -149,28 +149,42 @@ capitalize <- function(string){
 #====================================================================
 #====================================================================
 
-.onAttach <- function(libname, pkgname){
-  addchar <- function(n, char = " ") paste(rep(char,n), collapse="")
+.onAttach <- function(libname, pkgname)
+{
+  addchar <- function(n, char=" ") paste(rep(char,n), collapse="")
+  nc <- 65  # number of characters
 
+  tt1 <- "FAST FACTORIZATION OF HIGH-DIMENSIONAL"
+  tt2 <- "TENSOR PRODUCT MATRICES"
   currentVer <- as.character(utils::packageVersion(pkgname))
-  tt1 <- paste0("Loaded '",pkgname,"' R-package. Version ",
-                currentVer," (",utils::packageDate(pkgname),")")
-  tt2 <- "Authors: Lopez-Cruz M, Perez-Rodriguez P, & de los Campos G"
+  txt1 <- paste0("R-package: '",pkgname,"'")
+  txt2 <- paste0("Version: ",currentVer," (",utils::packageDate(pkgname),")")
+  txt3 <- "Authors: Lopez-Cruz M, Perez-Rodriguez P & de los Campos G"
 
-  packageStartupMessage("
-  |",addchar(70,"="),"|
-  | ",tt1,addchar(70-nchar(tt1)-1," "),"|
-  | ",tt2,addchar(70-nchar(tt2)-1," "),"|
-  |",addchar(70,"="),"|
-  ")
+  n1 <- c(floor((nc-nchar(tt1))/2), ceiling((nc-nchar(tt1))/2))
+  n2 <- c(floor((nc-nchar(tt2))/2), ceiling((nc-nchar(tt2))/2))
 
-  # Check for new version on CRAN
-  tmp <- utils::available.packages(repos="https://cloud.r-project.org")
-  if(ifelse(is.null(tmp),FALSE,pkgname%in%rownames(tmp))){
-    newVer <- as.character(tmp[pkgname,"Version"])
-    if(utils::compareVersion(newVer,currentVer) > 0){
-      packageStartupMessage(" Note: New version ",newVer,
-                            " of this package is available on CRAN")
+  if(interactive())
+  {
+    packageStartupMessage("
+    |",addchar(nc,"="),"|
+    |",addchar(n1[1]," "),tt1,addchar(n1[2]," "),"|
+    |",addchar(n2[1]," "),tt2,addchar(n2[2]," "),"|
+    | ",txt1,addchar(nc-nchar(txt1)-1," "),"|
+    | ",txt2,addchar(nc-nchar(txt2)-1," "),"|
+    | ",txt3,addchar(nc-nchar(txt3)-1," "),"|
+    |",addchar(nc,"="),"|
+    ")
+
+    # Check for new version on CRAN
+    tmp <- utils::available.packages(repos="https://cloud.r-project.org")
+    if(ifelse(is.null(tmp),FALSE,pkgname%in%rownames(tmp))){
+      newVer <- as.character(tmp[pkgname,"Version"])
+      if(utils::compareVersion(newVer,currentVer) > 0){
+        packageStartupMessage(" Note: New version ",newVer,
+                              " of this package is available on CRAN")
+      }
     }
   }
+  invisible()
 }
