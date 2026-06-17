@@ -30,13 +30,16 @@ melt_data <- function(data, id, measure,
       dt <- dt[,c(id,var.levels)]
       reshape2::melt(dt, id=id, variable.name=variable.name,value.name=value.name[k])
     })
-  }
-  #lapply(out, head)
-  tmp <- do.call(cbind,lapply(out, function(dt){
-     dt[,!colnames(dt) %in% c(id,variable.name),drop=F]
-  }))
 
-  data.frame(out[[1]][,c(id,variable.name),drop=F],tmp)
+    #lapply(out, head)
+    tmp <- do.call(cbind,lapply(out, function(dt){
+       dt[,!colnames(dt) %in% c(id,variable.name),drop=F]
+    }))
+
+    data.frame(out[[1]][,c(id,variable.name),drop=F],tmp)
+  }else{
+    stop("'reshape2' R-package is needed")
+  }
 }
 
 #=========================================================
@@ -103,7 +106,7 @@ get_corr <- function(dat, y_name = "y",
          cond1 <- (!is.na(x$y))
          cond2 <- (!is.na(x$yHat))
          nRecords <- sum(cond1&cond2)
-         correlation <- cor(x$y,x$yHat,use='pairwise.complete')
+         correlation <- cor(x$y,x$yHat, use='pairwise.complete')
          data.frame(x[1,c(by),drop=F], correlation,
                     nRecords,
                     SE=sqrt((1-correlation^2)/(nRecords-2))
@@ -214,7 +217,7 @@ make_plot <- function(data, x, y, group, SD = NULL, nSD = 1,
 
   # Breaks and Labels for y axis
   if(is.null(breaks.y)){
-    if(requireNamespace("RColorBrewer", quietly=TRUE)){
+    if(requireNamespace("ggplot2", quietly=TRUE)){
       breaks.y <- ggplot2::waiver()
     }
   }else{
@@ -223,7 +226,7 @@ make_plot <- function(data, x, y, group, SD = NULL, nSD = 1,
     }
   }
   if(is.null(labels.y)){
-    if(requireNamespace("RColorBrewer", quietly=TRUE)){
+    if(requireNamespace("ggplot2", quietly=TRUE)){
       labels.y <- ggplot2::waiver()
     }
   }
@@ -301,6 +304,8 @@ make_plot <- function(data, x, y, group, SD = NULL, nSD = 1,
   if(is.null(by.color)){
     if(requireNamespace("RColorBrewer", quietly=TRUE)){
       by.color <- RColorBrewer::brewer.pal(9, name="Blues")[seq(2,9,by=2)][1:nlevels(DF$by)]
+    }else{
+      stop("'RColorBrewer' R-package is needed")
     }
     names(by.color) <- levels(DF$by)
   }
@@ -311,12 +316,12 @@ make_plot <- function(data, x, y, group, SD = NULL, nSD = 1,
   #xmin <- 1-(1+gap.by)/2
   #xmax <- nlevels(DF$x_by) + gap.by*(nlevels(DF$by)-1) + (1+gap.by)/2
 
-  legend.position <- "right"; legend.justification <- "center"; legend.margin <- 0*ggplot2::margin(t=0,r=1,b=1,l=1)
-  if("legend.position" %in% names(args0)) legend.position <- args0[['legend.position']]
-  if("legend.justification" %in% names(args0)) legend.justification <- args0[['legend.justification']]
-  if("legend.margin" %in% names(args0)) legend.margin <- args0[['legend.margin']]
-
   if(requireNamespace("ggplot2", quietly=TRUE)){
+    legend.position <- "right"; legend.justification <- "center"; legend.margin <- 0*ggplot2::margin(t=0,r=1,b=1,l=1)
+    if("legend.position" %in% names(args0)) legend.position <- args0[['legend.position']]
+    if("legend.justification" %in% names(args0)) legend.justification <- args0[['legend.justification']]
+    if("legend.margin" %in% names(args0)) legend.margin <- args0[['legend.margin']]
+
     theme0 <- ggplot2::theme(
                     strip.text.x = ggplot2::element_text(size=7.5, margin=ggplot2::margin(t=1.2,b=1.2)),
                     strip.text.y = ggplot2::element_text(size=7.5, margin=ggplot2::margin(l=1.2,r=1.2)),
@@ -415,6 +420,8 @@ make_plot <- function(data, x, y, group, SD = NULL, nSD = 1,
      pp <- pp +
            ggplot2::guides(fill = ggplot2::guide_legend(override.aes=list(size = 1.5,
                                                                           color = "gray35")))
+   }else{
+     pp <- NULL
    }
    pp
 }
