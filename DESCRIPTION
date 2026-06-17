@@ -16,7 +16,6 @@ LazyLoad: true
 Depends: R (>= 3.6.0)
 Suggests: knitr, rmarkdown, ggplot2, ggnewscale, reshape2, RColorBrewer, rlang
 VignetteBuilder: knitr, rmarkdown
-BuildVignettes: no
 Encoding: UTF-8
 License: GPL-3
 NeedsCompilation: yes
