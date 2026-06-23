@@ -57,7 +57,7 @@ knitr::opts_chunk$set(cache=FALSE)
 ## ----eval=TRUE----------------------------------------------------------------
 out <- read.csv(url("https://raw.githubusercontent.com/MarcooLopez/tensorEVD/main/inst/extdata/results_simulation.txt"))
 head(out[,1:7])
-head(out[,8:12])  # results from the eigen function
+head(out[,8:12])   # results from the eigen function
 head(out[,13:17])  # results from the tensorEVD function
 
 ## ----eval=T-------------------------------------------------------------------
@@ -74,7 +74,7 @@ out$nE <- factor(out$nE, levels = unique(out$nE))
 
 # Reshaping the data
 measure <- c("time","Frobenius","CMD","nPC","pPC")
-dat <- melt_data(out, id=c("nG","nE","n","alpha"),
+dat <- melt_data2(out, id=c("nG","nE","n","alpha"),
                  measure=paste0(measure,"_"),
                  value.name=measure, variable.name="method")
 
@@ -89,7 +89,7 @@ dat0$ratio <- log10(dat0$time_eigen/dat0$time_tensorEVD)
 dat0$n <- dat0$n/1000
 breaks0 <- seq(1,4,by=1)
 
-figure1 <- make_plot(dat0, type="line", x='n', y='ratio', group="alpha", 
+figure1 <- make_plot(dat0, type="line", x='n', y='ratio', group="alpha",
                      group.label=NULL, facet="nG", facet2="nE", facet.type="grid",
                      xlab="Sample size (x1000)",
                      ylab="Computation time ratio (eigen/tensorEVD)",

@@ -392,7 +392,7 @@ head(out[,1:7])</code></pre>
 ## 4   0.9  100 30 10000         1  2899      2899
 ## 5   0.9  500 30 10000         1  7253      7253
 ## 6   0.9 1000 30 10000         1  8483      8483</code></pre>
-<pre class="r"><code>head(out[,8:12])  # results from the eigen function</code></pre>
+<pre class="r"><code>head(out[,8:12])   # results from the eigen function</code></pre>
 <pre><code>##   time_eigen Frobenius_eigen   CMD_eigen nPC_eigen pPC_eigen
 ## 1    242.120        144.4331 0.004126274       406 0.4060000
 ## 2    243.954        139.0350 0.001844430       968 0.2236082
@@ -424,7 +424,7 @@ out$nE &lt;- factor(out$nE, levels = unique(out$nE))
 
 # Reshaping the data
 measure &lt;- c(&quot;time&quot;,&quot;Frobenius&quot;,&quot;CMD&quot;,&quot;nPC&quot;,&quot;pPC&quot;)
-dat &lt;- melt_data(out, id=c(&quot;nG&quot;,&quot;nE&quot;,&quot;n&quot;,&quot;alpha&quot;),
+dat &lt;- melt_data2(out, id=c(&quot;nG&quot;,&quot;nE&quot;,&quot;n&quot;,&quot;alpha&quot;),
                  measure=paste0(measure,&quot;_&quot;),
                  value.name=measure, variable.name=&quot;method&quot;)
 
@@ -439,7 +439,7 @@ dat0$ratio &lt;- log10(dat0$time_eigen/dat0$time_tensorEVD)
 dat0$n &lt;- dat0$n/1000
 breaks0 &lt;- seq(1,4,by=1)
 
-figure1 &lt;- make_plot(dat0, type=&quot;line&quot;, x=&#39;n&#39;, y=&#39;ratio&#39;, group=&quot;alpha&quot;, 
+figure1 &lt;- make_plot(dat0, type=&quot;line&quot;, x=&#39;n&#39;, y=&#39;ratio&#39;, group=&quot;alpha&quot;,
                      group.label=NULL, facet=&quot;nG&quot;, facet2=&quot;nE&quot;, facet.type=&quot;grid&quot;,
                      xlab=&quot;Sample size (x1000)&quot;,
                      ylab=&quot;Computation time ratio (eigen/tensorEVD)&quot;,

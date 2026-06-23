@@ -324,11 +324,11 @@ make_plot <- function(data, x, y, group, SD = NULL, nSD = 1,
   stopifnot(all(levels(DF$group) %in% names(group.color)))
 
   if(is.null(by.color)){
-    if(requireNamespace("RColorBrewer", quietly=TRUE)){
-      by.color <- RColorBrewer::brewer.pal(9, name="Blues")[seq(2,9,by=2)][1:nlevels(DF$by)]
-    }else{
-      stop("'RColorBrewer' R-package is needed")
-    }
+    #by.color <- RColorBrewer::brewer.pal(9, name="Blues")
+    by.color <- c("#F7FBFF","#DEEBF7","#C6DBEF",
+                  "#9ECAE1","#6BAED6","#4292C6",
+                  "#2171B5","#08519C","#08306B")
+    by.color <- by.color[seq(2,9,by=2)][1:nlevels(DF$by)]
     names(by.color) <- levels(DF$by)
   }
   stopifnot(all(levels(DF$by) %in% names(by.color)))
@@ -394,14 +394,19 @@ make_plot <- function(data, x, y, group, SD = NULL, nSD = 1,
           ggplot2::scale_x_continuous(breaks=breaks.x, labels=labels.x, limits=c(xmin,xmax),
                                       expand=ggplot2::expansion(mult = expand.x))
     if(!is.null(by)){
-      pp <- pp +
-          ggplot2::geom_rect(ggplot2::aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2, fill=by),
-                             data=datby, color=NA, alpha=by.alpha) +
-          ggplot2::scale_fill_manual(by.label, values=by.color) +
-          ggplot2::guides(fill = ggplot2::guide_legend(override.aes=list(size=1.5, color="gray35"))) +
-          ggnewscale::new_scale_fill() +
-          ggplot2::geom_vline(ggplot2::aes(xintercept=x2), data=datby2, color=rect.by.color)
-      ylim <- c(NA,NA)
+      if(requireNamespace("ggnewscale", quietly=TRUE)){
+        pp <- pp +
+            ggplot2::geom_rect(ggplot2::aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2, fill=by),
+                               data=datby, color=NA, alpha=by.alpha) +
+            ggplot2::scale_fill_manual(by.label, values=by.color) +
+            ggplot2::guides(fill = ggplot2::guide_legend(override.aes=list(size=1.5, color="gray35"))) +
+            ggnewscale::new_scale_fill() +
+            ggplot2::geom_vline(ggplot2::aes(xintercept=x2), data=datby2, color=rect.by.color)
+        ylim <- c(NA,NA)
+      }else{
+        message("R-package 'ggnewscale' is needed")
+        return(NULL)
+      }
     }
     if(type == "bar"){
       pp <- pp + ggplot2::geom_rect(ggplot2::aes(xmin=x1, xmax=x2, ymin=y1, ymax=mean, fill=group)) +
@@ -443,6 +448,7 @@ make_plot <- function(data, x, y, group, SD = NULL, nSD = 1,
            ggplot2::guides(fill = ggplot2::guide_legend(override.aes=list(size = 1.5,
                                                                           color = "gray35")))
    }else{
+     message("R-package 'ggplot2' is needed")
      pp <- NULL
    }
    pp
