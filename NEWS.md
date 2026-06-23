@@ -1,4 +1,4 @@
-### Version 0.1.5 (2026-06-16)
+### Version 0.1.5 (2026-06-23)
 
 - Argument 'nu' can be passed to the 'tensorEVD' function to define the number of eigenvectors to be derived
 - Argument 'norm' can be passed to the 'tensorEVD' function to scale the Kronecker product of eigenvalues before sorting. If not provided, it will be internally calculated

@@ -22,7 +22,7 @@ melt2 <- function(data, id,
 }
 
 #=========================================================
-melt_data2 <- function(data, id, measure,
+melt_data <- function(data, id, measure,
                       variable.name = "variable",
                       value.name = measure){
 

@@ -220,7 +220,7 @@ out$nE <- factor(out$nE, levels = unique(out$nE))
 
 # Reshaping the data
 measure <- c("time","Frobenius","CMD","nPC","pPC")
-dat <- melt_data2(out, id=c("nG","nE","n","alpha"),
+dat <- melt_data(out, id=c("nG","nE","n","alpha"),
                  measure=paste0(measure,"_"),
                  value.name=measure, variable.name="method")
 
