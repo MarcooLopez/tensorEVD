@@ -1,6 +1,28 @@
 
 #=========================================================
-melt_data <- function(data, id, measure,
+melt2 <- function(data, id,
+                  variable.name="method",
+                  value.name="value")
+{
+  stopifnot(all(id %in% colnames(data)))
+  vars <- setdiff(colnames(data),id)
+  if(length(vars)==0){
+    out <- data[,id]
+  }else{
+    cls <- unique(apply(data[,vars],2,typeof))
+    if(length(cls)>1){
+      stop("More than one variable types were found")
+    }
+    out <- do.call(rbind,lapply(seq_along(vars), function(k){
+      cbind(data[,id],method=vars[k],value=data[,vars[k]])
+    }))
+    colnames(out) <- c(id,variable.name,value.name)
+  }
+  return(out)
+}
+
+#=========================================================
+melt_data2 <- function(data, id, measure,
                       variable.name = "variable",
                       value.name = measure){
 
@@ -22,24 +44,24 @@ melt_data <- function(data, id, measure,
     }
   }
 
-  if(requireNamespace("reshape2", quietly=TRUE)){
-    out <- lapply(seq_along(measure), function(k){
-      tmp <- grep(paste0("^",measure[k]),names0,value=T)
-      dt <- data[,c(id, tmp)]
-      colnames(dt) <- c(id, gsub(paste0("^",measure[k]), "", tmp))
-      dt <- dt[,c(id,var.levels)]
-      reshape2::melt(dt, id=id, variable.name=variable.name,value.name=value.name[k])
-    })
 
-    #lapply(out, head)
-    tmp <- do.call(cbind,lapply(out, function(dt){
-       dt[,!colnames(dt) %in% c(id,variable.name),drop=F]
-    }))
+  out <- lapply(seq_along(measure), function(k){
+    tmp <- grep(paste0("^",measure[k]),names0,value=T)
+    dt <- data[,c(id, tmp)]
+    colnames(dt) <- c(id, gsub(paste0("^",measure[k]), "", tmp))
+    dt <- dt[,c(id,var.levels)]
+    melt2(dt, id=id,
+          variable.name=variable.name,
+          value.name=value.name[k])
+  })
 
-    data.frame(out[[1]][,c(id,variable.name),drop=F],tmp)
-  }else{
-    stop("'reshape2' R-package is needed")
-  }
+  #lapply(out, head)
+  tmp <- do.call(cbind,lapply(out, function(dt){
+     dt[,!colnames(dt) %in% c(id,variable.name),drop=F]
+  }))
+
+  data.frame(out[[1]][,c(id,variable.name),drop=F],tmp)
+
 }
 
 #=========================================================
